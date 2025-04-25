@@ -3,25 +3,50 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "prepare": "husky",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint 'src/**/*.{js,ts,tsx}'",
+    "dev": "dotenv -e .env.development -- next dev --turbopack",
+    "build:dev": "dotenv -e .env.development -- next build",
+    "start:dev": "dotenv -e .env.development -- next start",
+    "qa": "dotenv -e .env.qa -- next dev",
+    "build:qa": "dotenv -e .env.qa -- next build",
+    "start:qa": "dotenv -e .env.qa -- next start",
+    "uat": "dotenv -e .env.uat -- next dev",
+    "build:uat": "dotenv -e .env.uat -- next build",
+    "start:uat": "dotenv -e .env.uat -- next start"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx}": [
+      "eslint --fix --max-warnings=0",
+      "prettier --write"
+    ]
   },
   "dependencies": {
+    "dotenv": "^16.5.0",
+    "next": "15.3.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": "15.3.1"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
-    "@eslint/eslintrc": "^3"
+    "husky": "^9.1.7",
+    "prettier": "^3.2.5",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && npm run format"
+    }
   }
 }
