@@ -29,6 +29,13 @@ export default function InputPhone() {
   const onChangeValue = (value: string) => {
     setvalue(value);
   };
+  const handleSubmit = () => {
+    if (value?.length === 10) {
+      console.log('Phone number submitted:', value);
+    } else {
+      console.log('Invalid phone number');
+    }
+  };
   return (
     <div className="w-full flex flex-col items-center">
       <label className='text-[#171717] font-["spirits-soft"] text-[20px] font-[400] leading-8 tracking-[0.4px]'>
@@ -63,7 +70,7 @@ export default function InputPhone() {
         />
       </div>
       <div className="pt-[30px] w-full relative">
-        <CustomButtom onClick={() => console.log('Button clicked')} text="Submit" color={color} />
+        <CustomButtom onClick={() => handleSubmit()} text="Submit" color={color} />
       </div>
     </div>
   );
