@@ -95,6 +95,8 @@ export default function PhonePages() {
                 'https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/Wrong_1745763938.svg'
               }
               alt="FailedLogo"
+              width={50}
+              height={50}
             />
             <div className="VerificationDescription">
               <h2>OTP Verification Failed!</h2>

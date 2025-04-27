@@ -48,6 +48,8 @@ export default function PaymentPage() {
               className="w-full cursor-pointer"
               src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/InvoiceBtn_1745758652.svg"
               alt="InvoiceBtn"
+              width={50}
+              height={50}
             />
             <CustomButtom
               text={'Get Started'}
