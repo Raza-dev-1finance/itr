@@ -1,0 +1,30 @@
+.OtpContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+    width: 100%;
+    margin-top: 15px;
+    justify-content: center;
+}
+
+.OtpInput {
+    max-width: 70px;
+    padding: 18px 14px 17px 15px;
+    border-radius: var(--Border-Radius, 2px);
+    background: var(--text-invert-primary, #FFF);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.OtpInput>input {
+    width: 100%;
+    text-align: center;
+    color: var(--Text, #171717);
+    font-family: "Fira Sans";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 25px;
+}

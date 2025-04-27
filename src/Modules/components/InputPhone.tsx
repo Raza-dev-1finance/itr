@@ -1,47 +1,29 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import CustomButtom from './CustomButtom';
 import Image from 'next/image';
 
-export default function InputPhone() {
-  const [value, setvalue] = useState<string | undefined>('');
-  const [color, setcolor] = useState<boolean>(false);
-  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    if (inputValue.length < 10) {
-      console.log('Invalid phone number');
-    } else {
-      console.log('Valid phone number');
-    }
-  };
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    if (!/^[6-9]\d{0,9}$/.test(inputValue) && inputValue !== '') {
-      return;
-    }
-    onChangeValue(inputValue);
-    if (inputValue.length == 10) {
-      setcolor(true);
-    } else {
-      setcolor(false);
-    }
-  };
-  const onChangeValue = (value: string) => {
-    setvalue(value);
-  };
-  const handleSubmit = () => {
-    if (value?.length === 10) {
-      console.log('Phone number submitted:', value);
-    } else {
-      console.log('Invalid phone number');
-    }
-  };
+type InputPhoneProps = {
+  value: string | undefined;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  onBlur: React.FocusEventHandler<HTMLInputElement>;
+  btn_disable: boolean;
+  handleSubmit: () => void;
+};
+
+export default function InputPhone({
+  value,
+  onChange,
+  onBlur,
+  btn_disable,
+  handleSubmit,
+}: InputPhoneProps) {
   return (
     <div className="w-full flex flex-col items-center">
       <label className='text-[#171717] font-["spirits-soft"] text-[20px] font-[400] leading-8 tracking-[0.4px]'>
         Phone Number
       </label>
-      <div className="flex flex-row w-[400px] justify-center pt-[5px] relative ">
+      <div className="w-full flex flex-row justify-center pt-[5px] relative ">
         <div className="pl-[16px] border-r-0 rounded-l-[4px] border-solid border-[1px] border-[#A3A3A3] bg-[#FFF] flex items-center gap-[10px] text-[#0A0A0A]">
           <Image
             src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/Flag_1745593945.svg"
@@ -70,7 +52,7 @@ export default function InputPhone() {
         />
       </div>
       <div className="pt-[30px] w-full relative">
-        <CustomButtom onClick={() => handleSubmit()} text="Submit" color={color} />
+        <CustomButtom onClick={() => handleSubmit()} text="Submit" color={btn_disable} />
       </div>
     </div>
   );

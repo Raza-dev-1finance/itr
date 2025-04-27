@@ -1,0 +1,124 @@
+.PaymentSuccess {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.PaymentSuccess>p {
+    color: var(--Text, #171717);
+    text-align: center;
+    font-family: "Fira Sans";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 28px;
+}
+
+.InvoiceAmount {
+    color: var(--Text, #171717);
+    text-align: center;
+    font-family: "Fira Sans";
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%;
+    letter-spacing: 0.56px;
+}
+
+.InvoiceDetail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.InvoiceDetail>p {
+    color: var(--Secondary-text-Dark, #212120);
+    text-align: center;
+    font-family: "Fira Sans";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.InvoiceDetail>span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    align-self: stretch;
+
+    color: var(--old-colours-Grey-5_Grey, #61625E);
+    text-align: center;
+    font-family: "Fira Sans";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.InvoiceDetail>span>svg {
+    cursor: pointer;
+}
+
+.RequestCallBackPayment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.RequestCallBackPayment>p {
+    color: var(--text-primary, #0A0A0A);
+    text-align: center;
+    font-family: var(--font-family-Body, "Fira Sans");
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 20px;
+}
+
+.CallBackClick {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.CallBackClick>p {
+    color: var(--text-primary, #0A0A0A);
+    text-align: center;
+    font-family: var(--font-family-Body, "Fira Sans");
+    font-size: var(--font-size-button-input-button-sm, 16px);
+    font-style: normal;
+    font-weight: 500;
+    line-height: 100%;
+}
+
+.FailureContainer {
+    display: flex;
+    padding: 50px 40px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    align-self: stretch;
+    border-radius: 8px;
+    background: var(--Purple---Brand-50, #F6F6FC);
+}
+
+.FailureDetails {
+    display: flex;
+    padding: 20px;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+    border-radius: var(--Border-Radius, 2px);
+    background: var(--old-colours-White, #FFF);
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.02);
+}
