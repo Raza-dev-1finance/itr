@@ -1,0 +1,45 @@
+.UploadMainContainer {
+    width: min(55%, 660px);
+    display: flex;
+    padding: 80px;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    border-radius: var(--spacing-8, 8px);
+    background: var(--neutral-gray-grey-white, #FFF);
+}
+
+.RequestCallBack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.RequestCallBack>p {
+    color: var(--text-primary, #0A0A0A);
+    text-align: center;
+    font-family: var(--font-family-Body, "Fira Sans");
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 20px;
+}
+
+.CallBackClick {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.CallBackClick>p {
+    color: var(--text-primary, #0A0A0A);
+    text-align: center;
+    font-family: var(--font-family-Body, "Fira Sans");
+    font-size: var(--font-size-button-input-button-sm, 16px);
+    font-style: normal;
+    font-weight: 500;
+    line-height: 100%;
+}
