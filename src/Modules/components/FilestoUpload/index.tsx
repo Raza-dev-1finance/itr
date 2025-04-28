@@ -11,7 +11,7 @@ export default function FilestoUpload() {
     </svg>
   );
   return (
-    <div className="w-full lg:h-[550px] lg:overflow-scroll">
+    <div className="w-full h-[500px] lg:h-[550px] overflow-scroll">
       <div className="flex flex-col items-start gap-5 w-full">
         <h3 className="StaticModalTitle">
           Check the full list of documents you need to file your ITR

@@ -6,8 +6,12 @@ import UploadSuccess from '@/Modules/components/UploadSuccess';
 import Modal from '@/Modules/components/Modal';
 import CustomButtom from '@/Modules/components/CustomButtom';
 import FilestoUpload from '@/Modules/components/FilestoUpload';
+import { getStorage } from '@/Modules/utils/storage';
+import { VerificationResponse } from '@/types';
+import { useRouter } from 'next/navigation';
 
 export default function UploadPage() {
+  const router = useRouter();
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -16,8 +20,20 @@ export default function UploadPage() {
   const [files, setFiles] = useState<File[]>([]);
 
   useEffect(() => {
+    const data = getStorage<VerificationResponse>('verification');
+    if (!data) {
+      router.push('/');
+    } else {
+      // if (!data?.pan_submitted) {
+      //   // Not pan -> Show pan page
+      //   router.push('/pan');
+      // } else if (!data?.personal_details_submitted) {
+      //   // Not Address & Name -> Show address page
+      //   router.push('/pan');
+      // }
+    }
     setUploadedFiles([]);
-  }, []);
+  }, [router]);
 
   function handleSubmit() {
     setUploadSuccess(true);
@@ -62,7 +78,7 @@ export default function UploadPage() {
               alt="logo"
             />
             <div className="DocumentUploadContainer">
-              <div className="DocumentUploadDescription w-5/6">
+              <div className="DocumentUploadDescription w-full lg:w-5/6">
                 <h2>Upload Your Documents</h2>
                 <p>
                   Accepted formats: .TXT, .XLSX, .CSV, .JSON, .ZIP, .DOC, .DOCX, .PDF, .PNG, .JPG,
@@ -72,7 +88,7 @@ export default function UploadPage() {
                   Check the full list of documents you need to file your ITR
                 </span>
               </div>
-              <div className="w-5/6 flex flex-col items-center gap-[20px]">
+              <div className="w-full lg:w-5/6 flex flex-col items-center gap-[20px]">
                 <input
                   onChange={handleChange}
                   hidden
@@ -201,9 +217,9 @@ export default function UploadPage() {
                   </svg>
                 </div>
               </div>
-              <div className="flex flex-col gap-[15px] items-center w-5/6">
+              <div className="flex flex-col gap-[15px] items-center w-full lg:w-5/6">
                 <CustomButtom text={'Submit'} color={files.length > 0} onClick={handleSubmit} />
-                <p className="NoteDescription w-3/6 text-center">
+                <p className="NoteDescription w-5/6 lg:w-3/6 text-center">
                   <b>Note:</b> Once documents are submitted, you cannot delete or edit them
                 </p>
               </div>

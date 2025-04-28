@@ -69,3 +69,47 @@
     font-weight: 500;
     line-height: 100%;
 }
+
+.ChatWithUs > p{
+    color: var(--text-primary, #0A0A0A);
+    text-align: center;
+    font-family: var(--font-family-Body, "Fira Sans");
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 20px;
+}
+.ChatWithUsContent{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+.ChatWithUsContent>p{
+    color: var(--text-primary, #0A0A0A);
+    text-align: center;
+    font-family: var(--font-family-Body, "Fira Sans");
+    font-size: var(--font-size-button-input-button-sm, 16px);
+    font-style: normal;
+    font-weight: 500;
+    line-height: 100%;
+}
+
+@media only screen and (max-width: 540px){
+    .CallBackClick{
+        display: none;
+    }
+    .VerificationDescription>h2 {
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 160%; /* 32px */
+        letter-spacing: 0.4px;
+    }
+    .VerificationDescription>p{
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 300;
+        line-height: 25px; 
+    }
+}

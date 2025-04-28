@@ -203,3 +203,14 @@
 .PasswordField::placeholder {
     opacity: 0.4;
 }
+
+@media only screen and (max-width: 540px){
+    .UploadMainContainer{
+        width: 90%;
+        background: unset;
+        padding: 0px;
+    }
+    .DocumentUploadContainer{
+        padding: 30px 15px;
+    }
+}

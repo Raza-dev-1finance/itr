@@ -16,16 +16,16 @@ export default function PaymentPage() {
   );
   return (
     <div className="w-full">
-      <div className="flex flex-row justify-center pt-[60px]">
+      <div className="flex flex-col lg:flex-row items-center justify-between lg:justify-center lg:pt-[60px] min-h-screen py-15">
         {paymentSuccess ? (
-          <div className="flex flex-col gap-[30px] items-center w-[610px] p-[80px] rounded-[8px] bg-white">
+          <div className="flex flex-col gap-[30px] items-center w-11/12 lg:w-[610px] py-15 lg:p-[80px] rounded-[8px] lg:bg-white">
             <Image
               src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/Logo_1745575770.png"
               width={60}
               height={65}
               alt="logo"
             />
-            <div className="w-full flex flex-col items-center gap-[10px]">
+            <div className="w-full flex flex-col items-center gap-[10px] bg-[#FFF] p-5 rounded-[2px] lg:rounded-[0px] lg:p-0 lg:bg-none">
               <div className="PaymentSuccess">
                 <Image
                   src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/PaymentSuccess_1745758749.svg"
@@ -45,16 +45,24 @@ export default function PaymentPage() {
               </div>
             </div>
             <Image
-              className="w-full cursor-pointer"
+              className="w-full cursor-pointer hidden lg:block"
               src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/InvoiceBtn_1745758652.svg"
               alt="InvoiceBtn"
               width={50}
+              height={50}
+            />
+            <Image
+              className="w-auto cursor-pointer block lg:hidden"
+              src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/Logo_ButtonsMob_1745855136.svg"
+              alt="InvoiceBtn"
+              width={40}
               height={50}
             />
             <CustomButtom
               text={'Get Started'}
               color={true}
               onClick={() => setPaymentSuccess((prev) => !prev)}
+              cls="hidden lg:block"
             />
             <div className="RequestCallBackPayment">
               <p>Need help or have any queries?</p>
@@ -90,7 +98,7 @@ export default function PaymentPage() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-[30px] items-center w-[610px] p-[80px] rounded-[8px] bg-white">
+          <div className="flex flex-col gap-[30px] items-center w-[610px] p-[80px] rounded-[8px] lg:bg-white">
             <div className="FailureContainer">
               <Image
                 src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/Logo_1745575770.png"
@@ -117,6 +125,7 @@ export default function PaymentPage() {
                 text={'Retry'}
                 color={true}
                 onClick={() => setPaymentSuccess((prev) => !prev)}
+                cls="hidden lg:block"
               />
             </div>
             <div className="RequestCallBackPayment">
@@ -153,6 +162,13 @@ export default function PaymentPage() {
             </div>
           </div>
         )}
+        <div className="w-11/12 lg:hidden mx-auto">
+          <CustomButtom
+            text={paymentSuccess ? 'Get Started' : 'Retry'}
+            color={true}
+            onClick={() => setPaymentSuccess((prev) => !prev)}
+          />
+        </div>
       </div>
     </div>
   );
