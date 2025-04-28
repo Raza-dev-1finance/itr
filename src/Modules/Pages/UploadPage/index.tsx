@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import UploadSuccess from '@/Modules/components/UploadSuccess';
 import Modal from '@/Modules/components/Modal';
 import CustomButtom from '@/Modules/components/CustomButtom';
+import FilestoUpload from '@/Modules/components/FilestoUpload';
 
 export default function UploadPage() {
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
@@ -243,7 +244,7 @@ export default function UploadPage() {
         )}
       </div>
       <Modal open={openModal} setOpen={setOpenModal} modalCentreCls="rounded-[10px]">
-        <div></div>
+        <FilestoUpload />
       </Modal>
     </>
   );

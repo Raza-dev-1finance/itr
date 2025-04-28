@@ -5,9 +5,14 @@ import InputPhone from '@/Modules/components/InputPhone';
 import Modal from '@/Modules/components/Modal';
 import OtpInput from '@/Modules/components/OtpInput';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { getStorage, setStorage } from '@/Modules/utils/storage';
+import { VerificationResponse } from '@/types';
+import { useRouter } from 'next/navigation';
 
 export default function PhonePages() {
+  const router = useRouter();
   const [errorModal, setErrorModal] = useState<boolean>(false);
   const [value, setvalue] = useState<string | undefined>('');
   const [color, setcolor] = useState<boolean>(false);
@@ -15,6 +20,35 @@ export default function PhonePages() {
   const OTP_LENGTH = 4;
   const [otpValue, setOtpValue] = useState<string>('');
   const [otpState, setOtpState] = useState<boolean>(false);
+
+  function handleRoute(data: VerificationResponse) {
+    if (!data.pan_submitted) {
+      // Not pan -> Show pan page
+      router.push('/pan');
+    } else if (!data.personal_details_submitted) {
+      // Not Address & Name -> Show address page
+      router.push('/details?show=personal');
+    } else if (data.payment_successful) {
+      // Payment is done -> Show documnet upload page
+      router.push('/document-upload');
+    }
+  }
+
+  useEffect(() => {
+    const sessionDetails = getStorage<VerificationResponse>('token');
+    if (sessionDetails && sessionDetails?.token) {
+      if (!sessionDetails.pan_submitted) {
+        // Not pan -> Show pan page
+        router.push('/pan');
+      } else if (!sessionDetails.personal_details_submitted) {
+        // Not Address & Name -> Show address page
+        router.push('/details?show=personal');
+      } else if (sessionDetails.payment_successful) {
+        // Payment is done -> Show documnet upload page
+        router.push('/document-upload');
+      }
+    }
+  }, [router]);
 
   const onPhoneInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -39,18 +73,53 @@ export default function PhonePages() {
   const onChangeValue = (value: string) => {
     setvalue(value);
   };
-  const handleSubmit = () => {
+
+  function sendOtp(mobileNumber: string) {
+    axios
+      .get(`${process.env.NEXT_PUBLIC_TAX_API}/website/get_otp?mobile_no=${mobileNumber}`)
+      .then((res) => {
+        console.log({ res });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+
+  function verifyOtp() {
+    axios
+      .post(
+        `${process.env.NEXT_PUBLIC_TAX_API}/website/verify_otp?mobile_no=${value}&otp=${otpValue}`,
+      )
+      .then(({ data }) => {
+        const verificationResponse: VerificationResponse = {
+          token: data.access_token,
+          pan_submitted: data.pan_submitted,
+          personal_details_submitted: data.personal_details_submitted,
+          payment_successful: data.payment_successful,
+          docs_uploaded: data.docs_uploaded,
+        };
+        setStorage<VerificationResponse>('verification', verificationResponse);
+        handleRoute(verificationResponse);
+      })
+      .catch((err) => {
+        setErrorModal(true);
+        console.error(err);
+      });
+  }
+
+  const resendOtp = () => {
     if (value?.length === 10) {
-      console.log('Phone number submitted:', value);
-      setOtpState(true);
-    } else {
-      console.log('Invalid phone number');
+      sendOtp(value);
     }
   };
 
-  function handleOtpSubmit() {
-    setErrorModal(true);
-  }
+  const handleSubmit = () => {
+    if (value?.length === 10) {
+      sendOtp(value);
+      setOtpState(true);
+    }
+  };
+
   return (
     <>
       <div className="w-full">
@@ -69,9 +138,10 @@ export default function PhonePages() {
               {otpState ? (
                 <OtpInput
                   btn_disable={otpValue.length == OTP_LENGTH}
-                  handleSubmit={handleOtpSubmit}
+                  handleSubmit={verifyOtp}
                   length={OTP_LENGTH}
                   setOptCombine={setOtpValue}
+                  resendOtp={resendOtp}
                 />
               ) : (
                 <InputPhone
@@ -103,7 +173,13 @@ export default function PhonePages() {
               <p>Oops! It seems like there was an issue verifying your OTP.</p>
             </div>
             <div className="w-3/6">
-              <CustomButtom text={'Retry'} color={true} onClick={() => setErrorModal(false)} />
+              <CustomButtom
+                text={'Retry'}
+                color={true}
+                onClick={() => {
+                  setErrorModal(false);
+                }}
+              />
             </div>
           </div>
           <div className="RequestCallBack">
