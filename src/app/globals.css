@@ -63,10 +63,6 @@ input:focus {
   input[type='number']::-webkit-inner-spin-button {
     @apply appearance-none m-0;
   }
-  ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
-  }
 
   /* Firefox */
   input[type='number'] {

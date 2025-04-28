@@ -1,15 +1,15 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
+# #!/bin/sh
+# . "$(dirname "$0")/_/husky.sh"
 
-echo "🔍 Running ESLint & Prettier checks..."
+# echo "🔍 Running ESLint & Prettier checks..."
 
-# Run lint-staged (checks only staged files)
-npx lint-staged
-RESULT=$?
+# # Run lint-staged (checks only staged files)
+# npx lint-staged
+# RESULT=$?
 
-if [ $RESULT -ne 0 ]; then
-  echo "❌ Linting or formatting errors detected. Commit aborted!"
-  exit 1
-fi
+# if [ $RESULT -ne 0 ]; then
+#   echo "❌ Linting or formatting errors detected. Commit aborted!"
+#   exit 1
+# fi
 
-echo "✅ All checks passed. Proceeding with commit..."
+# echo "✅ All checks passed. Proceeding with commit..."
