@@ -43,3 +43,163 @@
     font-weight: 500;
     line-height: 100%;
 }
+
+.DocumentUploadContainer {
+    display: flex;
+    padding: 50px 15px;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    align-self: stretch;
+    border-radius: var(--spacing-8, 8px);
+    background: var(--Purple---Brand-50, #F6F6FC);
+}
+
+.DocumentUploadDescription {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.DocumentUploadDescription>h2 {
+    color: var(--Text, #171717);
+    text-align: center;
+    font-family: "spirits-soft";
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 160%;
+    letter-spacing: 0.4px;
+}
+
+.DocumentUploadDescription>p {
+    color: var(--neutral-gray-grey-800, #262626);
+    text-align: center;
+    font-family: var(--font-family-Body, "Fira Sans");
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 18px;
+}
+
+.DocumentUploadDescription>span {
+    cursor: pointer;
+    color: var(--text-primary, #0A0A0A);
+    text-align: center;
+    font-family: var(--font-family-Body, "Fira Sans");
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18px;
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-skip-ink: none;
+    text-decoration-thickness: auto;
+    text-underline-offset: auto;
+    text-underline-position: from-font;
+}
+
+.NoteDescription {
+    color: var(--Secondary-text-Dark, #212120);
+    font-family: "Fira Sans";
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 14px;
+}
+
+.NoteDescription>b {
+    color: var(--Secondary-text-Dark, #212120);
+    text-align: center;
+    font-family: "Fira Sans";
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 14px;
+}
+
+.UploadBtn {
+    cursor: pointer;
+    display: flex;
+    height: 48px;
+    padding: 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+    border-radius: var(--Border-Radius-Radius-sm, 2px);
+    border: 1px solid var(--text-primary, #0A0A0A);
+    background: var(--components-InputFields-background, #FFF);
+}
+
+.UploadBtn>p {
+    color: var(--components-button-primary-pressed, #0A0A0A);
+    font-family: var(--font-family-Body, "Fira Sans");
+    font-size: var(--font-size-body-sm, 16px);
+    font-style: normal;
+    font-weight: 400;
+    line-height: 100%;
+}
+
+.AddMoreFile {
+    width: fit-content;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.AddMoreFile>p {
+    color: var(--neutral-gray-grey-950, #0A0A0A);
+    font-family: var(--font-family-Body, "Fira Sans");
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+}
+
+.FileNames>p {
+    color: var(--neutral-gray-grey-950, #0A0A0A);
+    font-family: var(--font-family-Body, "Fira Sans");
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.FileNames>span {
+    color: var(--neutral-gray-grey-500, #737373);
+    font-family: var(--font-family-Body, "Fira Sans");
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 18px;
+}
+
+.errorPassword>p {
+    color: var(--text-error-text, #EF4444);
+    font-family: var(--font-family-Body, "Fira Sans");
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.PasswordField {
+    border-radius: var(--Border-Radius-Radius-sm, 2px);
+    border: 1px solid var(--components-InputFields-idle-border, #A3A3A3);
+    background: var(--components-InputFields-background, #FFF);
+    padding: 16px;
+    color: var(--components-InputFields-contained-elements, #0A0A0A);
+    font-family: var(--font-family-Body, "Fira Sans");
+    font-size: var(--font-size-body-sm, 16px);
+    font-style: normal;
+    font-weight: 400;
+    line-height: 100%;
+}
+
+.PasswordField::placeholder {
+    opacity: 0.4;
+}
