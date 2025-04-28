@@ -1,6 +1,5 @@
 'use client';
 import Image from 'next/image';
-import './PanVerify.css';
 import React, { useState } from 'react';
 import InputPan from '@/Modules/components/PanInput';
 

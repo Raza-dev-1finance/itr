@@ -35,14 +35,14 @@ export default function PhonePages() {
   }
 
   useEffect(() => {
-    const sessionDetails = getStorage<VerificationResponse>('token');
+    const sessionDetails = getStorage<VerificationResponse>('verification');
     if (sessionDetails && sessionDetails?.token) {
       if (!sessionDetails.pan_submitted) {
         // Not pan -> Show pan page
         router.push('/pan');
       } else if (!sessionDetails.personal_details_submitted) {
         // Not Address & Name -> Show address page
-        router.push('/details?show=personal');
+        router.push('/pan?show=personal');
       } else if (sessionDetails.payment_successful) {
         // Payment is done -> Show documnet upload page
         router.push('/document-upload');
@@ -224,7 +224,7 @@ export default function PhonePages() {
           </div>
           <div className="RequestCallBack">
             <p>Need help or have any queries?</p>
-            <div onClick={handleChatClick} className="ChatWithUsContent">
+            <div onClick={handleChatClick} className="ChatWithUsContent lg:!hidden">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
