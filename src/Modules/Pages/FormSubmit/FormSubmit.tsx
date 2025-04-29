@@ -198,6 +198,14 @@ React.useEffect(() => {
     },2000)
   }
 
+  function handleCall() {
+    tax_api.post("/website/request-callback").then((res) => {
+      console.log({ res })
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
   return (
     <>
       <div className="w-full">
@@ -213,7 +221,7 @@ React.useEffect(() => {
                   value={data}
                   onChange={onPanInputChange}
                   onBlur={onPanInputBlur}
-                  btn_disable={color}
+                  btn_disable={color && !isLoading}
                   handleSubmit={handleSubmit}
                   errorModal={errorModal}
                   formData={formData}
@@ -228,7 +236,7 @@ React.useEffect(() => {
                 </div>
                 <div className='flex flex-col items-center bg-white pt-[30px]'>
                 <div className='text-[#0A0A0A] text-center font-["Fira Sans"] text-[14px] font-light leading-5'>Need help or have any queries?</div>
-                <div className='flex flex-row items-center gap-[8px] pt-[10px] cursor-pointer' onClick={() => window.open('https://wa.me/919999999999?text=Hello%20I%20need%20help%20with%20my%20PAN%20verification', '_blank')}>
+                <div className='flex flex-row items-center gap-[8px] pt-[10px] cursor-pointer' onClick={handleCall}>
                     <svg className='block max-sm:hidden' xmlns="http://www.w3.org/2000/svg" width="17" height="18" viewBox="0 0 17 18" fill="none">
                     <path d="M16.1724 12.9763L13.9082 10.6039C13.0996 9.75659 11.7249 10.0955 11.4015 11.197C11.1589 11.9596 10.3502 12.3832 9.62245 12.2137C8.00518 11.7901 5.82186 9.58713 5.41754 7.80783C5.17495 7.04524 5.66013 6.19796 6.38791 5.94381C7.43913 5.60489 7.76259 4.16451 6.95395 3.31722L4.68977 0.944825C4.04286 0.351725 3.07249 0.351725 2.50645 0.944825L0.970039 2.55467C-0.566371 4.24924 1.13177 8.73985 4.93236 12.7221C8.73295 16.7043 13.0187 18.5684 14.636 16.8738L16.1724 15.2639C16.7385 14.5861 16.7385 13.5694 16.1724 12.9763Z" fill="#5B498E"/>
                     </svg>

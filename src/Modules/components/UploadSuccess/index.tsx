@@ -1,12 +1,20 @@
 import Image from 'next/image';
 import './index.css';
 import CustomButtom from '../CustomButtom';
+import tax_api from '@/Modules/utils/axios';
 
 type UploadSuccessProps = {
   handleClick: () => void;
 };
 
 export default function UploadSuccess({ handleClick }: UploadSuccessProps) {
+  function handleCall() {
+    tax_api.post("/website/request-callback").then((res) => {
+      console.log({res})
+    }).catch(err => {
+      console.error(err)
+    })
+  }
   return (
     <div className="w-full flex items-center gap-[50px] flex-col">
       <Image
@@ -32,7 +40,7 @@ export default function UploadSuccess({ handleClick }: UploadSuccessProps) {
       </div>
       <div className="RequestCallBack">
         <p>Need help or have any queries?</p>
-        <div className="CallBackClick">
+        <div className="CallBackClick" onClick={handleCall}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="17"

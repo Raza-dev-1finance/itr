@@ -10,6 +10,7 @@ import axios from 'axios';
 import { getStorage, setStorage } from '@/Modules/utils/storage';
 import { VerificationResponse } from '@/types';
 import { useRouter } from 'next/navigation';
+import tax_api from '@/Modules/utils/axios';
 
 export default function PhonePages() {
   const router = useRouter();
@@ -124,6 +125,14 @@ export default function PhonePages() {
     const msg = encodeURIComponent('Hey! I need help in ITR filling!');
     window.open(`https://api.whatsapp.com/send?phone=917718801029&text=${msg}`,'_blank');
   };
+
+  function handleCall() {
+    tax_api.post("/website/request-callback").then((res) => {
+      console.log({ res })
+    }).catch(err => {
+      console.error(err)
+    })
+  }
 
   return (
     <>
@@ -263,7 +272,7 @@ export default function PhonePages() {
                 />
               </svg>
             </div>
-            <div className="CallBackClick">
+            <div className="CallBackClick" onClick={handleCall}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="17"

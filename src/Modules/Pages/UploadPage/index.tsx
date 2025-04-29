@@ -180,6 +180,14 @@ export default function UploadPage() {
     })
   }
 
+  function handleCall() {
+    tax_api.post("/website/request-callback").then((res) => {
+      console.log({ res })
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
   return (
     <>
       <div className="UploadMainContainer">
@@ -349,7 +357,7 @@ export default function UploadPage() {
             </div>
             <div className="RequestCallBack">
               <p>Need help or have any queries?</p>
-              <div className="CallBackClick">
+              <div className="CallBackClick" onClick={handleCall}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="17"

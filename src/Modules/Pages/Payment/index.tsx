@@ -7,6 +7,7 @@ import { PaymentResponse, VerificationResponse } from '@/types';
 import { useCallback, useEffect } from 'react';
 import { updateStorage } from '@/Modules/utils/storage';
 import moment from 'moment';
+import tax_api from '@/Modules/utils/axios';
 
 type PaymentPageProps = {
   paymentResponse: PaymentResponse,
@@ -17,7 +18,7 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
   const router = useRouter();
 
   useEffect(() => {
-    if (paymentResponse.status === "Compelted") {
+    if (paymentResponse.status === "COMPLETED") {
       updateStorage("verification", {personal_details_submitted: true, payment_successful: true})
     }
   }, [paymentResponse.status])
@@ -50,10 +51,18 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
     </svg>
   );
 
+  function handleCall() {
+    tax_api.post("/website/request-callback").then((res) => {
+      console.log({ res })
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
   return (
     <div className="w-full">
       <div className="flex flex-col lg:flex-row items-center justify-between lg:justify-center lg:pt-[60px] min-h-screen py-15">
-        {paymentResponse.status === "Compelted" ? (
+        {paymentResponse.status === "COMPLETED" ? (
           <div className="flex flex-col gap-[30px] items-center w-11/12 lg:w-[610px] py-15 lg:p-[80px] rounded-[8px] lg:bg-white">
             <Image
               src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/Logo_1745575770.png"
@@ -104,7 +113,7 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
             />
             <div className="RequestCallBackPayment">
               <p>Need help or have any queries?</p>
-              <div className="CallBackClick">
+              <div className="CallBackClick" onClick={handleCall}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="17"
@@ -162,13 +171,13 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
               <CustomButtom
                 text={'Retry'}
                 color={true}
-                onClick={() => { if (!(paymentResponse.status === "Compelted")) { handleRetry() } }}
+                onClick={() => { if (!(paymentResponse.status === "COMPLETED")) { handleRetry() } }}
                 cls="hidden lg:block"
               />
             </div>
             <div className="RequestCallBackPayment">
               <p>Need help or have any queries?</p>
-              <div className="CallBackClick">
+              <div className="CallBackClick" onClick={handleCall}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="17"
@@ -202,9 +211,9 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
         )}
         <div className="w-11/12 lg:hidden mx-auto">
           <CustomButtom
-            text={paymentResponse.status === "Compelted" ? 'Get Started' : 'Retry'}
+            text={paymentResponse.status === "COMPLETED" ? 'Get Started' : 'Retry'}
             color={true}
-            onClick={() => { if (!(paymentResponse.status === "Compelted")) { handleRetry() } }}
+            onClick={() => { if (!(paymentResponse.status === "COMPLETED")) { handleRetry() } else {handleGetStarted()} }}
           />
         </div>
       </div>
