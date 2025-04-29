@@ -1,12 +1,31 @@
 'use client';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import InputPan from '@/Modules/components/PanInput';
+import { useRouter } from 'next/navigation';
+import { VerificationResponse } from '@/types';
+import { getStorage } from '@/Modules/utils/storage';
 
 export default function PanVerify() {
   const [value, setvalue] = useState<string | undefined>('');
   const [color, setcolor] = useState<boolean>(false);
-    const [errorModal, setErrorModal] = useState<boolean>(false);
+  const [errorModal, setErrorModal] = useState<boolean>(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const data = getStorage<VerificationResponse>("verification")
+    if (!data?.token){
+      router.replace("/")
+    } else {
+      if (!data?.pan_submitted) {
+        // Not pan -> Show pan page
+        router.push('/pan-verify');
+      } else if (!data?.personal_details_submitted) {
+        // Not Address & Name -> Show address page
+        router.push('/details');
+      }
+    }
+  },[router])
 
   const onPanInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;

@@ -2,9 +2,13 @@
 import Image from 'next/image';
 import './Payment.css';
 import CustomButtom from '@/Modules/components/CustomButtom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { getStorage } from '@/Modules/utils/storage';
+import { VerificationResponse } from '@/types';
 
 export default function PaymentPage() {
+  const router = useRouter();
   const [paymentSuccess, setPaymentSuccess] = useState<boolean>(true);
   const copySvg = (
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -14,6 +18,18 @@ export default function PaymentPage() {
       />
     </svg>
   );
+
+  useEffect(() => {
+    const data = getStorage<VerificationResponse>("verification");
+    if (!data?.token){
+      router.replace("/")
+    } else {
+      if (!data.payment_successful){
+        router.replace("/details")
+      }
+    }
+  },[router])
+
   return (
     <div className="w-full">
       <div className="flex flex-col lg:flex-row items-center justify-between lg:justify-center lg:pt-[60px] min-h-screen py-15">

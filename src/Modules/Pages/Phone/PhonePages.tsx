@@ -24,10 +24,10 @@ export default function PhonePages() {
   function handleRoute(data: VerificationResponse) {
     if (!data.pan_submitted) {
       // Not pan -> Show pan page
-      router.push('/pan');
+      router.push('/pan-verify');
     } else if (!data.personal_details_submitted) {
       // Not Address & Name -> Show address page
-      router.push('/details?show=personal');
+      router.push('/details');
     } else if (data.payment_successful) {
       // Payment is done -> Show documnet upload page
       router.push('/document-upload');
@@ -39,10 +39,10 @@ export default function PhonePages() {
     if (sessionDetails && sessionDetails?.token) {
       if (!sessionDetails.pan_submitted) {
         // Not pan -> Show pan page
-        router.push('/pan');
+        router.push('/pan-verify');
       } else if (!sessionDetails.personal_details_submitted) {
         // Not Address & Name -> Show address page
-        router.push('/pan?show=personal');
+        router.push('/details');
       } else if (sessionDetails.payment_successful) {
         // Payment is done -> Show documnet upload page
         router.push('/document-upload');

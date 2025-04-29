@@ -20,6 +20,7 @@ type FileInput = {
 
 export default function UploadPage() {
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -43,28 +44,74 @@ export default function UploadPage() {
     if (!data) {
       router.push('/');
     } else {
-      // if (!data?.pan_submitted) {
-      //   // Not pan -> Show pan page
-      //   router.push('/pan');
-      // } else if (!data?.personal_details_submitted) {
-      //   // Not Address & Name -> Show address page
-      //   router.push('/pan');
-      // }
-
+      if (!data?.pan_submitted) {
+        // Not pan -> Show pan page
+        router.push('/pan-verify');
+      } else if (!data?.personal_details_submitted) {
+        // Not Address & Name -> Show address page
+        router.push('/details');
+      }
     }
     fetchUploadedFiles()
     // setUploadedFiles([]);
   }, [router, fetchUploadedFiles]);
 
-  function handleSubmit() {
-    files
-    .filter(fileItem => !fileItem.isSubmitted)
-    .forEach(fileItem => {
-      handleFileUpload(fileItem);
-    });
+  async function handleSubmit() {
+    setIsSubmitting(true)
+    const uploadTasks = files
+      .filter(fileItem => !fileItem.isSubmitted)
+      .map(async (fileItem) => {
+        try {
+          const res = await handleFileUpload(fileItem);
 
-  setUploadSuccess(true);
+          if (res?.status === 200) {
+            setFiles(prevFiles => {
+              const updated = [...prevFiles];
+              const index = updated.findIndex(f => f.file.name === fileItem.file.name);
+              if (index !== -1) {
+                updated[index] = { ...updated[index], isSubmitted: true };
+              }
+              return updated;
+            });
+          }
+
+          return { success: true, file: fileItem.file.name };
+        } catch (err: any) {
+          const isPasswordError = err?.response?.status === 422 && err?.response?.data?.detail === "Password required";
+
+          if (isPasswordError) {
+            setFiles(prevFiles => {
+              const updated = [...prevFiles];
+              const index = updated.findIndex(f => f.file.name === fileItem.file.name);
+              if (index !== -1) {
+                updated[index] = {
+                  ...updated[index],
+                  isPasswordRequired: true,
+                  isSubmitted: false,
+                };
+              }
+              return updated;
+            });
+          }
+
+          return { success: false, file: fileItem.file.name, error: err?.response?.data?.detail || "Unknown error" };
+        }
+      });
+
+    const results = await Promise.all(uploadTasks);
+
+    const allSuccessful = results.every(result => result.success);
+
+    if (allSuccessful) {
+      setUploadSuccess(true);
+      setFiles([]);
+      fetchUploadedFiles();
+    } else {
+      console.warn("Some uploads failed:", results.filter(r => !r.success));
+    }
+    setIsSubmitting(false);
   }
+
 
   const handleClick = () => {
     fileRef.current?.click();
@@ -81,7 +128,7 @@ export default function UploadPage() {
       setFiles((prev) => {
         const updated = [...prev, fileTemp];
         // Upload only after new file is added
-        handleFileUpload(fileTemp);
+        // handleFileUpload(fileTemp);
         return updated;
       });
     }
@@ -109,41 +156,13 @@ export default function UploadPage() {
       const formData = new FormData();
       formData.append("file", data.file);
 
-      tax_api.post(data.password != "" ? `/website/upload_website_docs?password=${data.password}` : `/website/upload_website_docs`, formData, {
+      return tax_api.post(data.password != "" ? `/website/upload_website_docs?password=${data.password}` : `/website/upload_website_docs`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         }
-      }).then((res) => {
-        console.log({ res });
-        // After successful upload, mark file as submitted
-        setFiles(prevFiles => {
-          const updatedFiles = [...prevFiles];
-          const indexOf = updatedFiles.findIndex(e => e.file.name === data.file.name);
-          if (indexOf !== -1) {
-            updatedFiles[indexOf] = {
-              ...updatedFiles[indexOf],
-              isSubmitted: true
-            };
-          }
-          return updatedFiles;
-        });
-      }).catch(err => {
-        if (err.response?.data?.detail === "Password required") {
-          setFiles(prevFiles => {
-            const updatedFiles = [...prevFiles];
-            const indexOf = updatedFiles.findIndex(e => e.file.name === data.file.name);
-            if (indexOf !== -1) {
-              updatedFiles[indexOf] = {
-                ...updatedFiles[indexOf],
-                isPasswordRequired: true,
-                isSubmitted: false
-              };
-            }
-            return updatedFiles;
-          });
-        }
       });
     }
+    return Promise.resolve();
   }
 
   function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>, fileName: string) {
@@ -244,7 +263,7 @@ export default function UploadPage() {
                     const sizeInBytes = e.file.size;
                     const sizeInMB = (sizeInBytes / (1024 * 1024)).toFixed(2);
                     return (
-                      <div className="flex flex-col gap-[10px]" key={`fileInfo-${index}`}>
+                      <div className="w-full flex flex-col gap-[10px]" key={`fileInfo-${index}`}>
                         <div className="w-full flex justify-between items-center">
                           <div className="flex gap-[8px] items-center">
                             <Image
@@ -322,7 +341,7 @@ export default function UploadPage() {
                 </div>
               </div>
               <div className="flex flex-col gap-[15px] items-center w-full lg:w-5/6">
-                <CustomButtom text={'Submit'} color={files.length > 0} onClick={handleSubmit} />
+                <CustomButtom text={'Submit'} color={files.length > 0 && !isSubmitting} onClick={handleSubmit} />
                 <p className="NoteDescription w-5/6 lg:w-3/6 text-center">
                   <b>Note:</b> Once documents are submitted, you cannot delete or edit them
                 </p>
