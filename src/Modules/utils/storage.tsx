@@ -17,3 +17,13 @@ export function removeStorage(key: string): void {
     sessionStorage.removeItem(key);
   }
 }
+
+export function updateStorage<T>(key: string, update: Partial<T>): void {
+  if (typeof window !== 'undefined') {
+    const existing = getStorage<T>(key);
+    if (existing) {
+      const updated = { ...existing, ...update };
+      setStorage<T>(key, updated);
+    }
+  }
+}

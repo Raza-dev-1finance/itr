@@ -122,7 +122,7 @@ export default function PhonePages() {
 
   const handleChatClick = () => {
     const msg = encodeURIComponent('Hey! I need help in ITR filling!');
-    window.open(`https://api.whatsapp.com/send?phone=917718801029&text=${msg}`);
+    window.open(`https://api.whatsapp.com/send?phone=917718801029&text=${msg}`,'_blank');
   };
 
   return (
