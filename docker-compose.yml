@@ -1,16 +1,17 @@
 services:
   web:
+    container_name: ${WEB_CONTAINER_NAME}
     build: .
     ports:
-      - "3000:3000"
+       - "${HOST_PORT}:3000"
     env_file:
       - .env
     volumes:
       - .:/app
     restart: unless-stopped
     networks:
-      - cim_cim_identity_network
+      cim_cim_identity_network: null
 
-networks: 
-  cim_cim_identity_network: 
+networks:
+  cim_cim_identity_network:
     external: true
