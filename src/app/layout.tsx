@@ -28,7 +28,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" /> */}
       </Head>
-      <body className={`antialiased bg-[#E2E1F3] min-h-screen`}>{children}</body>
+      <body className={`antialiased bg-[#F9F9F9] lg:bg-[#E2E1F3] min-h-screen`}>{children}</body>
     </html>
   );
 }

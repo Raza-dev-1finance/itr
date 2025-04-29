@@ -1,13 +1,14 @@
 'use client';
 import './OtpInput.css';
 import CustomButtom from './CustomButtom';
-import { useRef, useState, ChangeEvent, KeyboardEvent } from 'react';
+import { useRef, useState, ChangeEvent, KeyboardEvent, useEffect } from 'react';
 
 type OtpInputProps = {
   btn_disable: boolean;
   length: number;
   handleSubmit: () => void;
   setOptCombine: React.Dispatch<React.SetStateAction<string>>;
+  resendOtp: () => void;
 };
 
 export default function OtpInput({
@@ -15,9 +16,31 @@ export default function OtpInput({
   btn_disable,
   length,
   setOptCombine,
+  resendOtp,
 }: OtpInputProps) {
   const [otp, setOtp] = useState<string[]>(() => new Array(length).fill(''));
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [resendActive, setResendActive] = useState(true);
+  const [timmer, setTimmer] = useState<number>(60);
+
+  useEffect(() => {
+    if (length || resendActive) {
+      setTimmer(60);
+      const interval = setInterval(() => {
+        setTimmer((prev) => prev - 1);
+      }, 1000);
+
+      setTimeout(() => {
+        clearInterval(interval);
+      }, 60000);
+
+      setResendActive(false);
+
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [length, resendActive]);
 
   const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
     if (
@@ -78,6 +101,13 @@ export default function OtpInput({
     }
   };
 
+  const handleResend = () => {
+    if (timmer <= 0) {
+      resendOtp();
+      setResendActive(true);
+    }
+  };
+
   return (
     <div className="w-full flex flex-col items-center">
       <label className='text-[#171717] font-["spirits-soft"] text-[20px] font-[400] leading-8 tracking-[0.4px]'>
@@ -99,6 +129,10 @@ export default function OtpInput({
             />
           </div>
         ))}
+      </div>
+      <div className="ResendOtp">
+        <p onClick={handleResend}>Resend OTP</p>
+        {timmer <= 0 ? null : <span>00:{timmer < 10 ? `0${timmer}` : timmer}</span>}
       </div>
       <div className="pt-[30px] w-full relative">
         <CustomButtom onClick={handleSubmit} text="Verify" color={btn_disable} />

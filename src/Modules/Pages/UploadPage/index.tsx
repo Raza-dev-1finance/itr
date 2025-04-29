@@ -1,26 +1,117 @@
 'use client';
 import Image from 'next/image';
 import './index.css';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import UploadSuccess from '@/Modules/components/UploadSuccess';
 import Modal from '@/Modules/components/Modal';
 import CustomButtom from '@/Modules/components/CustomButtom';
+import FilestoUpload from '@/Modules/components/FilestoUpload';
+import { getStorage } from '@/Modules/utils/storage';
+import { VerificationResponse } from '@/types';
+import { useRouter } from 'next/navigation';
+import tax_api from '@/Modules/utils/axios';
+
+type FileInput = {
+  file: File,
+  password: string | null,
+  isPasswordRequired: boolean,
+  isSubmitted: boolean
+}
 
 export default function UploadPage() {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
-  const [uploadedFiles, setUploadedFiles] = useState<number[]>([]);
-  const [files, setFiles] = useState<File[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+  const [files, setFiles] = useState<FileInput[]>([]);
+
+  const fetchUploadedFiles = useCallback(async () => {
+    try {
+      const { data } = await tax_api.get("/website/get_document_list?is_asc=true");
+      if (data?.data?.items) {
+        setUploadedFiles(data.data.items);
+      }
+    } catch (error) {
+      console.error("Error fetching uploaded files:", error);
+    }
+  }, [setUploadedFiles]);
 
   useEffect(() => {
-    setUploadedFiles([]);
-  }, []);
+    const data = getStorage<VerificationResponse>('verification');
+    if (!data) {
+      router.push('/');
+    } else {
+      if (!data?.pan_submitted) {
+        // Not pan -> Show pan page
+        router.push('/pan-verify');
+      } else if (!data?.personal_details_submitted) {
+        // Not Address & Name -> Show address page
+        router.push('/details');
+      }
+    }
+    fetchUploadedFiles()
+    // setUploadedFiles([]);
+  }, [router, fetchUploadedFiles]);
 
-  function handleSubmit() {
-    setUploadSuccess(true);
+  async function handleSubmit() {
+    setIsSubmitting(true)
+    const uploadTasks = files
+      .filter(fileItem => !fileItem.isSubmitted)
+      .map(async (fileItem) => {
+        try {
+          const res = await handleFileUpload(fileItem);
+
+          if (res?.status === 200) {
+            setFiles(prevFiles => {
+              const updated = [...prevFiles];
+              const index = updated.findIndex(f => f.file.name === fileItem.file.name);
+              if (index !== -1) {
+                updated[index] = { ...updated[index], isSubmitted: true };
+              }
+              return updated;
+            });
+          }
+
+          return { success: true, file: fileItem.file.name };
+        } catch (err: any) {
+          const isPasswordError = err?.response?.status === 422 && err?.response?.data?.detail === "Password required";
+
+          if (isPasswordError) {
+            setFiles(prevFiles => {
+              const updated = [...prevFiles];
+              const index = updated.findIndex(f => f.file.name === fileItem.file.name);
+              if (index !== -1) {
+                updated[index] = {
+                  ...updated[index],
+                  isPasswordRequired: true,
+                  isSubmitted: false,
+                };
+              }
+              return updated;
+            });
+          }
+
+          return { success: false, file: fileItem.file.name, error: err?.response?.data?.detail || "Unknown error" };
+        }
+      });
+
+    const results = await Promise.all(uploadTasks);
+
+    const allSuccessful = results.every(result => result.success);
+
+    if (allSuccessful) {
+      setUploadSuccess(true);
+      setFiles([]);
+      fetchUploadedFiles();
+    } else {
+      console.warn("Some uploads failed:", results.filter(r => !r.success));
+    }
+    setIsSubmitting(false);
   }
+
 
   const handleClick = () => {
     fileRef.current?.click();
@@ -28,11 +119,24 @@ export default function UploadPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFiles((prev) => [...prev, e.target.files![0]]);
+      const fileTemp: FileInput = {
+        file: e.target.files[0],
+        password: '',
+        isPasswordRequired: false,
+        isSubmitted: false
+      };
+      setFiles((prev) => {
+        const updated = [...prev, fileTemp];
+        // Upload only after new file is added
+        // handleFileUpload(fileTemp);
+        return updated;
+      });
     }
   };
 
   function addMoreDocument() {
+    setFiles([])
+    fetchUploadedFiles()
     setUploadSuccess(false);
   }
 
@@ -47,6 +151,35 @@ export default function UploadPage() {
     temp.splice(index, 1);
     setFiles([...temp]);
   }
+  function handleFileUpload(data: FileInput) {
+    if (data.file && data.file instanceof File) {
+      const formData = new FormData();
+      formData.append("file", data.file);
+
+      return tax_api.post(data.password != "" ? `/website/upload_website_docs?password=${data.password}` : `/website/upload_website_docs`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      });
+    }
+    return Promise.resolve();
+  }
+
+  function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>, fileName: string) {
+    let password = e.target.value;
+    setFiles(prevFiles => {
+      const updatedFiles = [...prevFiles];
+      const indexOf = updatedFiles.findIndex(e => e.file.name === fileName);
+      if (indexOf !== -1) {
+        updatedFiles[indexOf] = {
+          ...updatedFiles[indexOf],
+          password
+        };
+      }
+      return updatedFiles;
+    })
+  }
+
   return (
     <>
       <div className="UploadMainContainer">
@@ -61,7 +194,7 @@ export default function UploadPage() {
               alt="logo"
             />
             <div className="DocumentUploadContainer">
-              <div className="DocumentUploadDescription w-5/6">
+              <div className="DocumentUploadDescription w-full lg:w-5/6">
                 <h2>Upload Your Documents</h2>
                 <p>
                   Accepted formats: .TXT, .XLSX, .CSV, .JSON, .ZIP, .DOC, .DOCX, .PDF, .PNG, .JPG,
@@ -71,7 +204,7 @@ export default function UploadPage() {
                   Check the full list of documents you need to file your ITR
                 </span>
               </div>
-              <div className="w-5/6 flex flex-col items-center gap-[20px]">
+              <div className="w-full lg:w-5/6 flex flex-col items-center gap-[20px]">
                 <input
                   onChange={handleChange}
                   hidden
@@ -82,6 +215,7 @@ export default function UploadPage() {
                 {uploadedFiles.length > 0 && (
                   <>
                     {uploadedFiles.map((e, index) => {
+                      const extension = e?.filename.split('.').pop()?.toLowerCase();
                       return (
                         <div
                           className="w-full flex justify-between items-center"
@@ -90,13 +224,13 @@ export default function UploadPage() {
                           <div className="flex gap-[8px] items-center">
                             <Image
                               className="h-auto"
-                              src={`/icons/pdf.svg`}
+                              src={`/icons/${extension}.svg`}
                               width={30}
                               height={30}
                               alt="file_icon"
                             />
                             <div className="FileNames">
-                              <p>Income Proof</p>
+                              <p>{e?.filename}</p>
                               <span>20 MB</span>
                             </div>
                           </div>
@@ -125,11 +259,11 @@ export default function UploadPage() {
                 )}
                 {files.length > 0 &&
                   files.map((e, index) => {
-                    const extension = e.name.split('.').pop()?.toLowerCase();
-                    const sizeInBytes = e.size;
+                    const extension = e.file.name.split('.').pop()?.toLowerCase();
+                    const sizeInBytes = e.file.size;
                     const sizeInMB = (sizeInBytes / (1024 * 1024)).toFixed(2);
                     return (
-                      <div className="flex flex-col gap-[10px]" key={`fileInfo-${index}`}>
+                      <div className="w-full flex flex-col gap-[10px]" key={`fileInfo-${index}`}>
                         <div className="w-full flex justify-between items-center">
                           <div className="flex gap-[8px] items-center">
                             <Image
@@ -140,7 +274,7 @@ export default function UploadPage() {
                               alt="file_icon"
                             />
                             <div className="FileNames">
-                              <p>{e.name}</p>
+                              <p>{e.file.name}</p>
                               <span>{sizeInMB} MB</span>
                             </div>
                           </div>
@@ -159,25 +293,31 @@ export default function UploadPage() {
                             />
                           </svg>
                         </div>
-                        <div className="flex gap-[5px] items-center errorPassword">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="25"
-                            viewBox="0 0 24 25"
-                            fill="none"
-                          >
-                            <path
-                              d="M3.42546 21.0142C3.25596 21.0142 3.10371 20.9728 2.96871 20.89C2.83371 20.8071 2.72879 20.6979 2.65396 20.5622C2.57596 20.4275 2.53304 20.2817 2.52521 20.1247C2.51738 19.9677 2.55971 19.8122 2.65221 19.6582L11.213 4.87021C11.3056 4.71621 11.4215 4.60238 11.5605 4.52871C11.6996 4.45505 11.8461 4.41821 12 4.41821C12.1538 4.41821 12.3003 4.45505 12.4395 4.52871C12.5785 4.60238 12.6943 4.71621 12.787 4.87021L21.3477 19.6582C21.4402 19.8122 21.4825 19.9677 21.4747 20.1247C21.4669 20.2817 21.424 20.4275 21.346 20.5622C21.2711 20.6979 21.1662 20.8071 21.0312 20.89C20.8962 20.9728 20.744 21.0142 20.5745 21.0142H3.42546ZM4.44996 19.5142H19.55L12 6.51421L4.44996 19.5142ZM12 18.322C12.2288 18.322 12.4206 18.2445 12.5755 18.0897C12.7303 17.9349 12.8077 17.743 12.8077 17.5142C12.8077 17.2854 12.7303 17.0935 12.5755 16.9387C12.4206 16.7839 12.2288 16.7065 12 16.7065C11.7711 16.7065 11.5793 16.7839 11.4245 16.9387C11.2696 17.0935 11.1922 17.2854 11.1922 17.5142C11.1922 17.743 11.2696 17.9349 11.4245 18.0897C11.5793 18.2445 11.7711 18.322 12 18.322ZM12.0002 15.7065C12.2129 15.7065 12.391 15.6346 12.5345 15.491C12.6781 15.3471 12.75 15.169 12.75 14.9565V11.4565C12.75 11.244 12.678 11.0659 12.5342 10.9222C12.3904 10.7784 12.2122 10.7065 11.9997 10.7065C11.787 10.7065 11.609 10.7784 11.4655 10.9222C11.3218 11.0659 11.25 11.244 11.25 11.4565V14.9565C11.25 15.169 11.3219 15.3471 11.4657 15.491C11.6095 15.6346 11.7877 15.7065 12.0002 15.7065Z"
-                              fill="#EF4444"
-                            />
-                          </svg>
-                          <p>
-                            This file is password protected, please add the password below and
-                            submit.{' '}
-                          </p>
-                        </div>
-                        <input placeholder="Add Password" type="text" className="PasswordField" />
+                        {
+                          e.isPasswordRequired ? (
+                            <>
+                              <div className="flex gap-[5px] items-center errorPassword">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="24"
+                                  height="25"
+                                  viewBox="0 0 24 25"
+                                  fill="none"
+                                >
+                                  <path
+                                    d="M3.42546 21.0142C3.25596 21.0142 3.10371 20.9728 2.96871 20.89C2.83371 20.8071 2.72879 20.6979 2.65396 20.5622C2.57596 20.4275 2.53304 20.2817 2.52521 20.1247C2.51738 19.9677 2.55971 19.8122 2.65221 19.6582L11.213 4.87021C11.3056 4.71621 11.4215 4.60238 11.5605 4.52871C11.6996 4.45505 11.8461 4.41821 12 4.41821C12.1538 4.41821 12.3003 4.45505 12.4395 4.52871C12.5785 4.60238 12.6943 4.71621 12.787 4.87021L21.3477 19.6582C21.4402 19.8122 21.4825 19.9677 21.4747 20.1247C21.4669 20.2817 21.424 20.4275 21.346 20.5622C21.2711 20.6979 21.1662 20.8071 21.0312 20.89C20.8962 20.9728 20.744 21.0142 20.5745 21.0142H3.42546ZM4.44996 19.5142H19.55L12 6.51421L4.44996 19.5142ZM12 18.322C12.2288 18.322 12.4206 18.2445 12.5755 18.0897C12.7303 17.9349 12.8077 17.743 12.8077 17.5142C12.8077 17.2854 12.7303 17.0935 12.5755 16.9387C12.4206 16.7839 12.2288 16.7065 12 16.7065C11.7711 16.7065 11.5793 16.7839 11.4245 16.9387C11.2696 17.0935 11.1922 17.2854 11.1922 17.5142C11.1922 17.743 11.2696 17.9349 11.4245 18.0897C11.5793 18.2445 11.7711 18.322 12 18.322ZM12.0002 15.7065C12.2129 15.7065 12.391 15.6346 12.5345 15.491C12.6781 15.3471 12.75 15.169 12.75 14.9565V11.4565C12.75 11.244 12.678 11.0659 12.5342 10.9222C12.3904 10.7784 12.2122 10.7065 11.9997 10.7065C11.787 10.7065 11.609 10.7784 11.4655 10.9222C11.3218 11.0659 11.25 11.244 11.25 11.4565V14.9565C11.25 15.169 11.3219 15.3471 11.4657 15.491C11.6095 15.6346 11.7877 15.7065 12.0002 15.7065Z"
+                                    fill="#EF4444"
+                                  />
+                                </svg>
+                                <p>
+                                  This file is password protected, please add the password below and
+                                  submit.{' '}
+                                </p>
+                              </div>
+                              <input placeholder="Add Password" type="text" className="PasswordField" value={e.password || ""} onChange={(event) => handlePasswordChange(event, e.file.name)} />
+                            </>
+                          ) : null
+                        }
                       </div>
                     );
                   })}
@@ -200,9 +340,9 @@ export default function UploadPage() {
                   </svg>
                 </div>
               </div>
-              <div className="flex flex-col gap-[15px] items-center w-5/6">
-                <CustomButtom text={'Submit'} color={files.length > 0} onClick={handleSubmit} />
-                <p className="NoteDescription w-3/6 text-center">
+              <div className="flex flex-col gap-[15px] items-center w-full lg:w-5/6">
+                <CustomButtom text={'Submit'} color={files.length > 0 && !isSubmitting} onClick={handleSubmit} />
+                <p className="NoteDescription w-5/6 lg:w-3/6 text-center">
                   <b>Note:</b> Once documents are submitted, you cannot delete or edit them
                 </p>
               </div>
@@ -243,7 +383,7 @@ export default function UploadPage() {
         )}
       </div>
       <Modal open={openModal} setOpen={setOpenModal} modalCentreCls="rounded-[10px]">
-        <div></div>
+        <FilestoUpload />
       </Modal>
     </>
   );
