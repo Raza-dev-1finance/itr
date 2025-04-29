@@ -5,3 +5,10 @@ export type VerificationResponse = {
   payment_successful: boolean;
   personal_details_submitted: boolean;
 };
+
+export type PaymentResponse = {
+  status: string,
+  invoice_lin: string,
+  transaction_id: string,
+  created_at: string,
+}
