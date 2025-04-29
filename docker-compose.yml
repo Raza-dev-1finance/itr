@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   web:
     build: .
@@ -6,7 +5,12 @@ services:
       - "3000:3000"
     env_file:
       - .env
-      - .env.development
     volumes:
       - .:/app
     restart: unless-stopped
+    networks:
+      - cim_cim_identity_network
+
+networks: 
+  cim_cim_identity_network: 
+    external: true

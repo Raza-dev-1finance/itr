@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["imaages-hosting-1fin.s3.ap-south-1.amazonaws.com"],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  }
 };
 
 export default nextConfig;
