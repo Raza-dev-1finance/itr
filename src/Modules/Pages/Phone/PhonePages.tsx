@@ -55,6 +55,7 @@ export default function PhonePages() {
     const inputValue = e.target.value;
     if (inputValue.length < 10) {
       console.log('Invalid phone number');
+      setcolor(false)
     } else {
       console.log('Valid phone number');
     }
@@ -66,6 +67,8 @@ export default function PhonePages() {
     }
     if (inputValue.length <= 10) {
       setvalue(inputValue);
+    }
+    if(inputValue.length == 10) {
       setcolor(true);
     } else {
       setcolor(false);
