@@ -55,7 +55,7 @@ export default function InputPan({
     {errorModal && (
         <div className='w-full flex flex-row justify-start pt-[2px] relative '>
         <div className="text-red-500 text-sm">
-            Please enter a valid PAN number.
+            Please enter a valid PAN.
         </div>
         </div>
     )}

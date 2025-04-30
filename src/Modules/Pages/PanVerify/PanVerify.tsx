@@ -21,9 +21,12 @@ export default function PanVerify() {
       if (!data?.pan_submitted) {
         // Not pan -> Show pan page
         router.push('/pan-verify');
-      } else if (!data?.personal_details_submitted) {
+      } else if (!data?.personal_details_submitted || !data.payment_successful) {
         // Not Address & Name -> Show address page
         router.push('/details');
+      } else if (data.payment_successful) {
+       // Payment is done -> Show documnet upload page
+       router.push('/document-upload');
       }
     }
   },[router])
@@ -106,7 +109,7 @@ export default function PanVerify() {
                 errorModal={errorModal}
               />
             </div>
-            <div className='hidden lg:flex flex-col items-center lg:bg-white pt-[30px]'>
+            {/* <div className='hidden lg:flex flex-col items-center lg:bg-white pt-[30px]'>
               <div className='text-[#0A0A0A] text-center font-["Fira Sans"] text-[14px] font-light leading-5'>Need help or have any queries?</div>
               <div className='flex flex-row items-center gap-[8px] pt-[10px] cursor-pointer' onClick={handleCall}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="17" height="18" viewBox="0 0 17 18" fill="none">
@@ -117,7 +120,7 @@ export default function PanVerify() {
                   <path fill-rule="evenodd" clip-rule="evenodd" d="M7.50784 17.3008C7.11579 16.9871 7.05223 16.415 7.36587 16.023L11.76 10.5303L7.36587 5.03763C7.05223 4.64558 7.11579 4.0735 7.50784 3.75985C7.8999 3.44621 8.47198 3.50977 8.78562 3.90183L13.6341 9.9624C13.8997 10.2944 13.8997 10.7662 13.6341 11.0982L8.78562 17.1588C8.47198 17.5508 7.8999 17.6144 7.50784 17.3008Z" fill="#0A0A0A" />
                 </svg>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className='flex lg:hidden flex-col items-center lg:bg-white pt-[30px]'>
             <div className='text-[#0A0A0A] text-center font-["Fira Sans"] text-[14px] font-light leading-5'>Need help or have any queries?</div>

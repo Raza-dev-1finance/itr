@@ -4,7 +4,7 @@ import './Payment.css';
 import CustomButtom from '@/Modules/components/CustomButtom';
 import { useRouter } from 'next/navigation';
 import { PaymentResponse, VerificationResponse } from '@/types';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { updateStorage } from '@/Modules/utils/storage';
 import moment from 'moment';
 import tax_api from '@/Modules/utils/axios';
@@ -16,6 +16,7 @@ type PaymentPageProps = {
 
 export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPageProps) {
   const router = useRouter();
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (paymentResponse.status === "COMPLETED") {
@@ -31,6 +32,8 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
     if (typeof window !== "undefined" && "clipboard" in navigator) {
       try {
         await navigator.clipboard.writeText(text);
+        setCopied(true)
+        setTimeout(() => {setCopied(false)},1000)
         console.log("✅ Copied:", text);
       } catch (error) {
         console.error("❌ Copy failed:", error);
@@ -83,13 +86,18 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
               <p className="InvoiceAmount">₹2,499</p>
               <div className="InvoiceDetail">
                 <p>{moment(paymentResponse.created_at).format("Do MMMM YYYY | h:mm A")}</p>
-                <span>
-                  Transaction ID: HSKCCtrBBSye
+                <span className='relative'>
+                  Transaction ID: {paymentResponse.transaction_id}
                   {copySvg}
+                  {
+                    copied ? (
+                      <span className='Copied'>Copied</span>
+                    ) : null
+                  }
                 </span>
               </div>
             </div>
-            <a href={paymentResponse.invoice_lin} target='_blank'>
+            <a href={paymentResponse.invoice_lin} className='w-auto lg:w-full' target='_blank'>
               <Image
                 className="w-full cursor-pointer hidden lg:block"
                 src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/InvoiceBtn_1745758652.svg"
@@ -175,7 +183,7 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
                 cls="hidden lg:block"
               />
             </div>
-            <div className="RequestCallBackPayment">
+            {/* <div className="RequestCallBackPayment">
               <p>Need help or have any queries?</p>
               <div className="CallBackClick" onClick={handleCall}>
                 <svg
@@ -206,7 +214,7 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
                   />
                 </svg>
               </div>
-            </div>
+            </div> */}
           </div>
         )}
         <div className="w-11/12 lg:hidden mx-auto">

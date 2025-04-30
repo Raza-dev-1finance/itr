@@ -35,7 +35,7 @@ export default function InputPhone({
           <div className="w-[1.5px] h-[20px] bg-[#0A0A0A]"></div>
         </div>
         <input
-          type="number"
+          type="text"
           name="phone"
           id="phone"
           value={value}
@@ -43,6 +43,7 @@ export default function InputPhone({
           required
           onChange={onChange}
           onBlur={onBlur}
+          maxLength={10}
           className='w-[300px] pt-[16px] pr-[16px] pb-[16px] pl-[10px] flex-1 rounded-r-[4px]
             appearance-none border-solid border-[1px] border-[#A3A3A3] focus:ring-0 
             focus:ring-offset-0 focus:border-[#A3A3A3] bg-[#FFF] placeholder:text-[16px] 

@@ -11,7 +11,7 @@ export default function FilestoUpload() {
     </svg>
   );
   return (
-    <div className="w-full h-[500px] lg:h-[550px] overflow-scroll">
+    <div className="w-full h-[500px] lg:h-[450px] overflow-scroll">
       <div className="flex flex-col items-start gap-5 w-full">
         <h3 className="StaticModalTitle">
           Check the full list of documents you need to file your ITR
@@ -96,8 +96,9 @@ export default function FilestoUpload() {
             <Link
               target="_blank"
               href={
-                'https://docs.google.com/spreadsheets/d/1MNe9NY6VmxK8xcGTJFOVImXziU25E44a/edit#gid=965401715'
+                '/Assets and Liabilities.xlsx'
               }
+              download
             >
               Asset and liability Template
             </Link>

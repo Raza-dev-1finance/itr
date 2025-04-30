@@ -38,7 +38,7 @@ export default function UploadSuccess({ handleClick }: UploadSuccessProps) {
           <CustomButtom text={'Add more documents'} onClick={() => handleClick()} color={true} />
         </div>
       </div>
-      <div className="RequestCallBack">
+      {/* <div className="RequestCallBack">
         <p>Need help or have any queries?</p>
         <div className="CallBackClick" onClick={handleCall}>
           <svg
@@ -69,7 +69,7 @@ export default function UploadSuccess({ handleClick }: UploadSuccessProps) {
             />
           </svg>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

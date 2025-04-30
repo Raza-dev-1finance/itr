@@ -7,29 +7,27 @@ import { PaymentResponse, VerificationResponse } from '@/types';
 import tax_api from '@/Modules/utils/axios';
 import PaymentPage from '../Payment';
 import moment from 'moment';
+import Image from 'next/image';
 
 export default function FormSubmit() {
   const router = useRouter()
   const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [paymentSuccess, setPaymentSuccess] = useState<boolean>(false);
   const [paymentResponse, setPaymentResponse] = useState<PaymentResponse | undefined>();
 
   function handleRetry() {
     setvalue({
       name: '',
-      city: '',
       state: 'Select an option',
-      address: '',
+      email: '',
     })
     setPaymentResponse(undefined)
   }
 
 const [data, setvalue] = useState<{ [key: string]: string}>({
     name: '',
-    city: '',
+    email: '',
     state: 'Select an option',
-    address: '',
 });
 const wrapperRef = useRef<HTMLDivElement>(null);
 const [cityarr, setcityarr] = useState(false);
@@ -37,33 +35,56 @@ const [statearr, setstatearr] = useState(false);
 const [color, setcolor] = useState<boolean>(false);
 const [errorModal, setErrorModal] = useState<{ [key: string]: string}>({
     name: '',
-    city: '',
     state: '',
-    address: '',
+    email: '',
 });
 
-  const onPanInputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const inputValue = e.target.value;
-    if (inputValue === '') {
-      setErrorModal(prev => ({ ...prev, [e.target.name]: 'This field is required' }));
-    } else {
-      setErrorModal(prev => ({ ...prev, [e.target.name]: '' }));
+  const onPanInputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>, isRequired: boolean) => {
+    if(isRequired){
+      const inputValue = e.target.value;
+      if (inputValue === '') {
+        setErrorModal(prev => ({ ...prev, [e.target.name]: 'This field is required' }));
+      } else {
+        setErrorModal(prev => ({ ...prev, [e.target.name]: '' }));
+      }
     }
   };
 
   function onPanInputChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void {
         //   const { name, value } = e.target;
-        onChangeValue(e);
+        // onChangeValue(e);
+        let { name, value } = e.target;
+        
+        switch(name){
+          case "name":
+            value = value.replace(/[^a-zA-Z\s]/g, '');
+            break;
+          case "email":
+            const emailRegex =
+              /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?$/;
+
+            const isValid =
+              emailRegex.test(value) &&
+              !value.includes('..') &&
+              !value.endsWith('.');
+
+            if (value && !isValid) {
+              setErrorModal(prev => ({...prev, email: "Invalid email format"}))
+              setcolor(false)
+            }else{
+              setErrorModal(prev => ({...prev, email: ""}))
+            }
+            break
+        }
+        setvalue((prev) => ({
+          ...prev,
+          [name]: value.trimStart(),
+        }));
     }
-  const onChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setvalue((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // const onChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  // };
   useEffect(() => {
-    setcolor(data.name !== "" && data.state !== "Select an option"&& data.address !== "");
+    setcolor(data.name !== "" && data.state !== "Select an option" && errorModal.email == "");
   }, [data]);
 
 const onClick = (name: string) => {
@@ -86,7 +107,7 @@ React.useEffect(() => {
     if (!data.pan_submitted) {
       // Not pan -> Show pan page
       router.push('/pan-verify');
-    } else if (!data.personal_details_submitted) {
+    } else if (!data.personal_details_submitted || !data.payment_successful) {
       // Not Address & Name -> Show address page
       router.push('/details');
     } else if (data.payment_successful) {
@@ -108,7 +129,7 @@ React.useEffect(() => {
 
 
   const handleSubmit = () => {
-    tax_api.post("/website/generate-payment-link/",{...data, email: "abc@gmail.com", city: "none"}).then(({data}) => {
+    tax_api.post("/website/generate-payment-link/",{...data}).then(({data}) => {
       setFormSubmitted(true)
       if(data.statusCode === 200){
         window.open(data.paymentLink);
@@ -137,6 +158,15 @@ React.useEffect(() => {
       options: true,
       areatext: false,
     },
+    {
+      label: 'Email',
+      placeholder: 'Enter your email',
+      type: 'email',
+      name:"email",
+      required:false,
+      options: false,
+      areatext: false,
+    },
     // {
     //     label: 'City',
     //     placeholder: `Select an option`,
@@ -146,15 +176,15 @@ React.useEffect(() => {
     //     options: true,
     //     areatext: false,
     //   },
-    {
-      label: 'Address',
-      placeholder: `Enter your address`,
-      type: 'text',
-      name: "address",
-      required: false,
-      options: false,
-      areatext: true,
-    }
+    // {
+    //   label: 'Address',
+    //   placeholder: `Enter your address`,
+    //   type: 'text',
+    //   name: "address",
+    //   required: false,
+    //   options: false,
+    //   areatext: true,
+    // }
   ];
 
   useEffect(() => {
@@ -168,7 +198,6 @@ React.useEffect(() => {
       tax_api.get(`/website/get-payment-log/`).then(({data}) => {
         console.log(data)
         if(data.status == "COMPLETED") {
-          setPaymentSuccess(true)
           let paymentResponse = {
             status: data.status,
             invoice_lin: data.payment_invoice_link,
@@ -185,7 +214,6 @@ React.useEffect(() => {
             transaction_id: "",
             created_at: moment().toISOString(),
           }
-          setPaymentSuccess(false)
           setPaymentResponse(paymentResponse)
           setIsLoading(false)
           clearInterval(interval)
@@ -214,6 +242,12 @@ React.useEffect(() => {
             <div className="flex flex-row justify-center pt-[60px] ">
               <div className="flex flex-col items-center max-sm:w-[360px] p-[80px] max-sm:pb-[30px] max-sm:p-[0px] rounded-[8px] bg-white">
                 <div className="w-full flex flex-col items-center p-[50px] max-sm:p-[25px] rounded-[8px] bg-[#F6F6FC]">
+                <Image
+                    src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/Logo_1745575770.png"
+                    width={60}
+                    height={65}
+                    alt="logo"
+                  />
                 <div className='pt-[30px] text-[#171717] text-center text-[20px] font-[400] leading-[32px] font-["spirits-soft"] pb-[30px]'>
                   Enter your details to proceed with payment of ₹2,499/-
                 </div>
@@ -234,7 +268,7 @@ React.useEffect(() => {
                   setcityarr={setcityarr}
                 />
                 </div>
-                <div className='flex flex-col items-center bg-white pt-[30px]'>
+                {/* <div className='flex flex-col items-center bg-white pt-[30px]'>
                 <div className='text-[#0A0A0A] text-center font-["Fira Sans"] text-[14px] font-light leading-5'>Need help or have any queries?</div>
                 <div className='flex flex-row items-center gap-[8px] pt-[10px] cursor-pointer' onClick={handleCall}>
                     <svg className='block max-sm:hidden' xmlns="http://www.w3.org/2000/svg" width="17" height="18" viewBox="0 0 17 18" fill="none">
@@ -249,7 +283,7 @@ React.useEffect(() => {
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M7.50784 17.3008C7.11579 16.9871 7.05223 16.415 7.36587 16.023L11.76 10.5303L7.36587 5.03763C7.05223 4.64558 7.11579 4.0735 7.50784 3.75985C7.8999 3.44621 8.47198 3.50977 8.78562 3.90183L13.6341 9.9624C13.8997 10.2944 13.8997 10.7662 13.6341 11.0982L8.78562 17.1588C8.47198 17.5508 7.8999 17.6144 7.50784 17.3008Z" fill="#0A0A0A"/>
                     </svg>
                 </div>
-              </div>
+              </div> */}
               </div>
             </div>
           )

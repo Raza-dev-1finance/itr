@@ -26,7 +26,7 @@ export default function PhonePages() {
     if (!data.pan_submitted) {
       // Not pan -> Show pan page
       router.push('/pan-verify');
-    } else if (!data.personal_details_submitted) {
+    } else if (!data.personal_details_submitted || !data.payment_successful) {
       // Not Address & Name -> Show address page
       router.push('/details');
     } else if (data.payment_successful) {
@@ -41,7 +41,7 @@ export default function PhonePages() {
       if (!sessionDetails.pan_submitted) {
         // Not pan -> Show pan page
         router.push('/pan-verify');
-      } else if (!sessionDetails.personal_details_submitted) {
+      } else if (!sessionDetails.personal_details_submitted || !sessionDetails.payment_successful) {
         // Not Address & Name -> Show address page
         router.push('/details');
       } else if (sessionDetails.payment_successful) {
@@ -60,19 +60,16 @@ export default function PhonePages() {
     }
   };
   const onPhoneInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    if (!/^[6-9]\d{0,9}$/.test(inputValue) && inputValue !== '') {
+    const inputValue = e.target.value.trim();
+    if ((/[eE\-\+\.]/.test(inputValue) || !/^[6-9]\d{0,9}$/.test(inputValue)) && inputValue !== '') {
       return;
     }
-    onChangeValue(inputValue);
-    if (inputValue.length == 10) {
+    if (inputValue.length <= 10) {
+      setvalue(inputValue);
       setcolor(true);
     } else {
       setcolor(false);
     }
-  };
-  const onChangeValue = (value: string) => {
-    setvalue(value);
   };
 
   function sendOtp(mobileNumber: string) {
@@ -110,6 +107,7 @@ export default function PhonePages() {
 
   const resendOtp = () => {
     if (value?.length === 10) {
+      setOtpValue("");
       sendOtp(value);
     }
   };
@@ -166,6 +164,7 @@ export default function PhonePages() {
                   length={OTP_LENGTH}
                   setOptCombine={setOtpValue}
                   resendOtp={resendOtp}
+                  key={`${errorModal}`}
                 />
               ) : (
                 <InputPhone
@@ -234,14 +233,12 @@ export default function PhonePages() {
                 color={true}
                 onClick={() => {
                   setOtpValue('');
-                  setvalue('');
                   setErrorModal(false);
-                  setOtpState(false);
                 }}
               />
             </div>
           </div>
-          <div className="RequestCallBack">
+          <div className="RequestCallBack lg:!hidden">
             <p>Need help or have any queries?</p>
             <div onClick={handleChatClick} className="ChatWithUsContent lg:!hidden">
               <svg
