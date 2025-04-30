@@ -24,13 +24,14 @@ export default function UploadPage() {
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const [dotCount, setDotCount] = useState(0);
 
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   const [files, setFiles] = useState<FileInput[]>([]);
 
   const fetchUploadedFiles = useCallback(async () => {
     try {
-      const { data } = await tax_api.get("/website/get_document_list?is_asc=true");
+      const { data } = await tax_api.get("/website/get_document_list?is_asc=true&items_per_page=100");
       if (data?.data?.items) {
         setUploadedFiles(data.data.items);
       }
@@ -47,7 +48,7 @@ export default function UploadPage() {
       if (!data?.pan_submitted) {
         // Not pan -> Show pan page
         router.push('/pan-verify');
-      } else if (!data?.personal_details_submitted) {
+      } else if (!data?.personal_details_submitted || !data.payment_successful) {
         // Not Address & Name -> Show address page
         router.push('/details');
       }
@@ -188,6 +189,23 @@ export default function UploadPage() {
     })
   }
 
+  useEffect(() => {
+    if(isSubmitting){
+      const interval = setInterval(() => {
+        setDotCount((prev) => (prev + 1) % 6); // 0 to 3 dots
+      }, 500);
+  
+      return () => {clearInterval(interval); setDotCount(0)};
+    }
+  }, [isSubmitting]);
+
+  console.log({dotCount})
+
+  const submitting = <>Submitting{' '}
+    {Array(dotCount)
+      .fill('. ')
+      .join('')}
+  </>
   return (
     <>
       <div className="UploadMainContainer">
@@ -273,7 +291,7 @@ export default function UploadPage() {
                     return (
                       <div className="w-full flex flex-col gap-[10px]" key={`fileInfo-${index}`}>
                         <div className="w-full flex justify-between items-center">
-                          <div className="flex gap-[8px] items-center">
+                          <div className="w-full flex gap-[8px] items-center">
                             <Image
                               className="h-auto"
                               src={`/icons/${extension}.svg`}
@@ -286,20 +304,23 @@ export default function UploadPage() {
                               <span>{sizeInMB} MB</span>
                             </div>
                           </div>
-                          <svg
-                            onClick={() => handleCancel(index)}
-                            className="cursor-pointer"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="20"
-                            height="21"
-                            viewBox="0 0 20 21"
-                            fill="none"
-                          >
-                            <path
-                              d="M10.0002 11.6477L5.77265 15.8753C5.65727 15.9907 5.51225 16.0497 5.33757 16.0524C5.1629 16.055 5.01521 15.996 4.89448 15.8753C4.77375 15.7545 4.71338 15.6082 4.71338 15.4362C4.71338 15.2642 4.77375 15.1178 4.89448 14.9971L9.12205 10.7695L4.89448 6.54194C4.77909 6.42656 4.72007 6.28153 4.7174 6.10685C4.71472 5.93219 4.77375 5.78449 4.89448 5.66377C5.01521 5.54303 5.16157 5.48267 5.33357 5.48267C5.50557 5.48267 5.65193 5.54303 5.77265 5.66377L10.0002 9.89133L14.2278 5.66377C14.3432 5.54838 14.4882 5.48935 14.6629 5.48669C14.8376 5.48401 14.9853 5.54303 15.106 5.66377C15.2267 5.78449 15.2871 5.93085 15.2871 6.10285C15.2871 6.27485 15.2267 6.42121 15.106 6.54194L10.8784 10.7695L15.106 14.9971C15.2214 15.1125 15.2804 15.2575 15.2831 15.4322C15.2857 15.6069 15.2267 15.7545 15.106 15.8753C14.9853 15.996 14.8389 16.0564 14.6669 16.0564C14.4949 16.0564 14.3485 15.996 14.2278 15.8753L10.0002 11.6477Z"
-                              fill="#0A0A0A"
-                            />
-                          </svg>
+                          {
+                            e.isSubmitted ? null :
+                            <svg
+                              onClick={() => handleCancel(index)}
+                              className="cursor-pointer"
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="21"
+                              viewBox="0 0 20 21"
+                              fill="none"
+                            >
+                              <path
+                                d="M10.0002 11.6477L5.77265 15.8753C5.65727 15.9907 5.51225 16.0497 5.33757 16.0524C5.1629 16.055 5.01521 15.996 4.89448 15.8753C4.77375 15.7545 4.71338 15.6082 4.71338 15.4362C4.71338 15.2642 4.77375 15.1178 4.89448 14.9971L9.12205 10.7695L4.89448 6.54194C4.77909 6.42656 4.72007 6.28153 4.7174 6.10685C4.71472 5.93219 4.77375 5.78449 4.89448 5.66377C5.01521 5.54303 5.16157 5.48267 5.33357 5.48267C5.50557 5.48267 5.65193 5.54303 5.77265 5.66377L10.0002 9.89133L14.2278 5.66377C14.3432 5.54838 14.4882 5.48935 14.6629 5.48669C14.8376 5.48401 14.9853 5.54303 15.106 5.66377C15.2267 5.78449 15.2871 5.93085 15.2871 6.10285C15.2871 6.27485 15.2267 6.42121 15.106 6.54194L10.8784 10.7695L15.106 14.9971C15.2214 15.1125 15.2804 15.2575 15.2831 15.4322C15.2857 15.6069 15.2267 15.7545 15.106 15.8753C14.9853 15.996 14.8389 16.0564 14.6669 16.0564C14.4949 16.0564 14.3485 15.996 14.2278 15.8753L10.0002 11.6477Z"
+                                fill="#0A0A0A"
+                              />
+                            </svg>
+                          }
                         </div>
                         {
                           e.isPasswordRequired ? (
@@ -349,13 +370,13 @@ export default function UploadPage() {
                 </div>
               </div>
               <div className="flex flex-col gap-[15px] items-center w-full lg:w-5/6">
-                <CustomButtom text={'Submit'} color={files.length > 0 && !isSubmitting} onClick={handleSubmit} />
-                <p className="NoteDescription w-5/6 lg:w-3/6 text-center">
+                <CustomButtom text={isSubmitting ? submitting : 'Submit'} color={files.length > 0 && !isSubmitting} onClick={handleSubmit} />
+                <p className="NoteDescription w-5/6 text-center">
                   <b>Note:</b> Once documents are submitted, you cannot delete or edit them
                 </p>
               </div>
             </div>
-            <div className="RequestCallBack">
+            {/* <div className="RequestCallBack">
               <p>Need help or have any queries?</p>
               <div className="CallBackClick" onClick={handleCall}>
                 <svg
@@ -386,7 +407,7 @@ export default function UploadPage() {
                   />
                 </svg>
               </div>
-            </div>
+            </div> */}
           </div>
         )}
       </div>

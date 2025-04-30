@@ -35,6 +35,19 @@ export default function Modal({
     };
   }, [open, setOpen]);
 
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+      // Cleanup in case component unmounts while modal is open
+      document.body.style.overflow = 'auto';
+    };
+  }, [open]);
+
   return (
     <div
       id={`Modal${id}`}

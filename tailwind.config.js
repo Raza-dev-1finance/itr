@@ -44,5 +44,4 @@ module.exports = {
       padding: '2rem',
     },
   },
-  plugins: [require('tailwind-scrollbar')],
 };

@@ -16,7 +16,7 @@ export default function OtpInput({
   btn_disable,
   length,
   setOptCombine,
-  resendOtp,
+  resendOtp
 }: OtpInputProps) {
   const [otp, setOtp] = useState<string[]>(() => new Array(length).fill(''));
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
