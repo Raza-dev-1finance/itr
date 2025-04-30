@@ -119,7 +119,7 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
               onClick={handleGetStarted}
               cls="hidden lg:block"
             />
-            <div className="RequestCallBackPayment">
+            {/* <div className="RequestCallBackPayment">
               <p>Need help or have any queries?</p>
               <div className="CallBackClick" onClick={handleCall}>
                 <svg
@@ -150,7 +150,7 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
                   />
                 </svg>
               </div>
-            </div>
+            </div> */}
           </div>
         ) : (
           <div className="flex flex-col gap-[30px] items-center w-[610px] p-[80px] rounded-[8px] lg:bg-white">
