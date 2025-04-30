@@ -206,6 +206,9 @@ export default function UploadPage() {
       .fill('. ')
       .join('')}
   </>
+  function handleView(url: string) {
+    window.open(url, "_blank");
+  }
   return (
     <>
       <div className="UploadMainContainer">
@@ -244,8 +247,9 @@ export default function UploadPage() {
                       const extension = e?.filename.split('.').pop()?.toLowerCase();
                       return (
                         <div
-                          className="w-full flex justify-between items-center"
+                          className="w-full flex justify-between items-center cursor-pointer"
                           key={`fileInfo-${index}`}
+                          onClick={() => handleView(e.s3_filepath)}
                         >
                           <div className="flex gap-[8px] items-center">
                             <Image
