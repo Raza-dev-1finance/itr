@@ -263,7 +263,7 @@ export default function UploadPage() {
                             />
                             <div className="FileNames">
                               <p>{e?.filename}</p>
-                              {/* <span>20 MB</span> */}
+                              <span>{e?.size_in_bytes}</span>
                             </div>
                           </div>
                         </div>

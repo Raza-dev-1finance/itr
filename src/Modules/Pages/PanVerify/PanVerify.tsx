@@ -10,7 +10,7 @@ import tax_api from '@/Modules/utils/axios';
 export default function PanVerify() {
   const [value, setvalue] = useState<string | undefined>('');
   const [color, setcolor] = useState<boolean>(false);
-  const [errorModal, setErrorModal] = useState<boolean>(false);
+  const [errorModal, setErrorModal] = useState<string>("");
   const router = useRouter();
 
   useEffect(() => {
@@ -34,10 +34,10 @@ export default function PanVerify() {
   const onPanInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     if (/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/.test(inputValue) && inputValue !== '') {
-        setErrorModal(false);
+        setErrorModal("");
     }
     else{
-        setErrorModal(true);
+        setErrorModal("Please enter a valid PAN.");
     }
   };
   const onPanInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,12 +64,16 @@ export default function PanVerify() {
         router.push("/details")
         setvalue("")
       }).catch(err => {
-        console.error(err)
+        if(err.response.status === 400 && err.response?.data.detail == "PAN already exists"){
+          setErrorModal("PAN already exists")
+          setcolor(false)
+        }
+        // console.error(err)
       })
     } else {
       console.log('Invalid phone number');
     }
-    setcolor(true)
+    // setcolor(true)
   };
 
   const handleChatClick = () => {
