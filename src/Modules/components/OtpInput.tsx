@@ -42,6 +42,12 @@ export default function OtpInput({
     }
   }, [length, resendActive]);
 
+      useEffect(() => {
+        if (otpInputRefs.current[0]) {
+          otpInputRefs.current[0].focus();
+        }
+      }, [otpInputRefs]);
+
   const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
     if (
       (e.key === 'Backspace' || e.key === 'Delete') &&
@@ -131,7 +137,7 @@ export default function OtpInput({
         ))}
       </div>
       <div className="ResendOtp">
-        <p onClick={handleResend}>Resend OTP</p>
+        <p onClick={handleResend} className={`${timmer <= 0 ? "!text-[#171717] cursor-pointer" : ""}`}>Resend OTP</p>
         {timmer <= 0 ? null : <span>00:{timmer < 10 ? `0${timmer}` : timmer}</span>}
       </div>
       <div className="pt-[30px] w-full relative">

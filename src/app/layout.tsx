@@ -13,6 +13,15 @@ export const metadata: Metadata = {
   title: 'ITR Filing',
   description: 'ITR Filing',
   keywords: ['ITR', 'Filing', 'Tax', 'Compliance'],
+  openGraph: {
+    images: [
+      {
+        url: 'https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/ITRSubdomain_1746088599.png',
+        alt: 'ITR Filing Thumbnail',
+        type: 'image/png',
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
