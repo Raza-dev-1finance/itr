@@ -21,11 +21,11 @@ export default function OtpInput({
   const [otp, setOtp] = useState<string[]>(() => new Array(length).fill(''));
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [resendActive, setResendActive] = useState(true);
-  const [timmer, setTimmer] = useState<number>(60);
+  const [timmer, setTimmer] = useState<number>(59);
 
   useEffect(() => {
     if (length || resendActive) {
-      setTimmer(60);
+      setTimmer(59);
       const interval = setInterval(() => {
         setTimmer((prev) => prev - 1);
       }, 1000);

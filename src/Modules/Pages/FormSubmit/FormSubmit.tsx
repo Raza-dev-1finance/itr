@@ -160,7 +160,7 @@ React.useEffect(() => {
     },
     {
       label: 'Email',
-      placeholder: 'Enter your email',
+      placeholder: 'Enter email for invoice',
       type: 'email',
       name:"email",
       required:false,
