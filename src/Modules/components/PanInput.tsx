@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import CustomButtom from './CustomButtom';
 import Image from 'next/image';
 
@@ -9,7 +9,7 @@ type InputPhoneProps = {
   onBlur: React.FocusEventHandler<HTMLInputElement>;
   btn_disable: boolean;
   handleSubmit: () => void;
-  errorModal: string;
+  errorModal: ReactNode;
 };
 
 export default function InputPan({
@@ -52,7 +52,7 @@ export default function InputPan({
     Enter your registered PAN 
     </span>
     </div>
-    {errorModal != "" && (
+    {errorModal && (
         <div className='w-full flex flex-row justify-start pt-[2px] relative '>
         <div className="text-red-500 text-sm">
             {errorModal}

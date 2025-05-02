@@ -200,8 +200,6 @@ export default function UploadPage() {
     }
   }, [isSubmitting]);
 
-  console.log({dotCount})
-
   const submitting = <>Submitting{' '}
     {Array(dotCount)
       .fill('. ')
