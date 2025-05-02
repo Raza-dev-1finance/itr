@@ -127,6 +127,9 @@ export default function UploadPage() {
         isSubmitted: false
       }));
       setFiles((prev) => [...prev, ...fileTemp]);
+      if (fileRef.current) {
+        fileRef.current.value = "";
+      }
       // setFiles((prev) => {
       //   const updated = [...prev, fileTemp];
       //   // Upload only after new file is added
