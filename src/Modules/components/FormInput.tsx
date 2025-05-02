@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 'use client';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import CustomButtom from './CustomButtom';
 import cn from '../utils/cn';
 import { stat } from 'fs';
@@ -19,7 +19,7 @@ type InputPhoneProps = {
   setcityarr: React.Dispatch<React.SetStateAction<boolean>>;
   setstatearr: React.Dispatch<React.SetStateAction<boolean>>;
   formData: {
-    label: string;
+    label: ReactNode;
     placeholder: string;
     type: string;
     name: string;

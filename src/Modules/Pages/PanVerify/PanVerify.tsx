@@ -57,7 +57,7 @@ export default function PanVerify() {
     setvalue(value);
   };
   function extractPanFromMessage(message: string) {
-    const regex = /with (\w+)\. Go back/;
+    const regex = /with (\w+)\. Use other/;
     const match = message.match(regex);
     return match ? match[1] : null;
   }
@@ -75,8 +75,9 @@ export default function PanVerify() {
       }).catch(err => {
         if(err.response.status === 400 && err.response?.data.msg != ""){
           const pan = extractPanFromMessage(err.response?.data.msg)
+          console.log({pan})
           setErrorModal(<>
-            This PAN is already registered with {pan}. Please <span onClick={handleBack} className='underline cursor-pointer'>go back</span> to edit the number.
+           This PAN is already registered with {pan}. Use other PAN or <span onClick={handleBack} className='underline cursor-pointer'>go back</span> to edit mobile number.
           </>)
           setcolor(false)
         }

@@ -4,6 +4,7 @@ import CustomButtom from './CustomButtom';
 import { useRef, useState, ChangeEvent, KeyboardEvent, useEffect } from 'react';
 
 type OtpInputProps = {
+  clear: boolean,
   btn_disable: boolean;
   length: number;
   handleSubmit: () => void;
@@ -12,6 +13,7 @@ type OtpInputProps = {
 };
 
 export default function OtpInput({
+  clear,
   handleSubmit,
   btn_disable,
   length,
@@ -47,6 +49,13 @@ export default function OtpInput({
           otpInputRefs.current[0].focus();
         }
       }, [otpInputRefs]);
+
+      useEffect(() => {
+        if(clear){
+          setOtp(() => new Array(length).fill(''))
+        }
+      },[clear])
+
 
   const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
     if (
@@ -110,6 +119,7 @@ export default function OtpInput({
   const handleResend = () => {
     if (timmer <= 0) {
       resendOtp();
+      setOtp(() => new Array(length).fill(''))
       setResendActive(true);
     }
   };
