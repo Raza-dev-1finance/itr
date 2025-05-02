@@ -17,6 +17,7 @@ export default function PhonePages() {
   const [errorModal, setErrorModal] = useState<boolean>(false);
   const [value, setvalue] = useState<string | undefined>('');
   const [color, setcolor] = useState<boolean>(false);
+  const [clear, setClear] = useState<boolean>(false);
 
   const OTP_LENGTH = 4;
   const [otpValue, setOtpValue] = useState<string>('');
@@ -68,7 +69,7 @@ export default function PhonePages() {
     if (inputValue.length <= 10) {
       setvalue(inputValue);
     }
-    if(inputValue.length == 10) {
+    if (inputValue.length == 10) {
       setcolor(true);
     } else {
       setcolor(false);
@@ -82,6 +83,7 @@ export default function PhonePages() {
         // console.log({ res });
       })
       .catch((err) => {
+        setClear(true)
         console.error(err);
       });
   }
@@ -103,6 +105,7 @@ export default function PhonePages() {
         handleRoute(verificationResponse);
       })
       .catch((err) => {
+        setClear(false)
         setErrorModal(true);
         console.error(err);
       });
@@ -124,7 +127,7 @@ export default function PhonePages() {
 
   const handleChatClick = () => {
     const msg = encodeURIComponent('Hey! I need help in ITR filling!');
-    window.open(`https://api.whatsapp.com/send?phone=917718801029&text=${msg}`,'_blank');
+    window.open(`https://api.whatsapp.com/send?phone=917718801029&text=${msg}`, '_blank');
   };
 
   function handleCall() {
@@ -140,16 +143,16 @@ export default function PhonePages() {
       <div className="w-full pt-10 pb-12 flex flex-col justify-between min-h-screen">
         <div className="flex flex-row justify-center pt-[40px]">
           <div className="flex flex-col items-center w-11/12 lg:w-[610px] lg:p-[80px] rounded-[8px] lg:bg-white">
-          {
-            otpState ? (
+            {
+              otpState ? (
                 <div className='w-full flex items-center gap-[12px] lg:hidden'>
                   <svg xmlns="http://www.w3.org/2000/svg" width="9" height="18" viewBox="0 0 9 18" fill="none">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M7.95382 0.875444C8.42428 1.25182 8.50056 1.93831 8.12419 2.40878L2.85122 8.99999L8.12419 15.5912C8.50056 16.0617 8.42428 16.7482 7.95382 17.1245C7.48335 17.5009 6.79686 17.4246 6.42048 16.9542L0.602332 9.68147C0.283598 9.28305 0.283598 8.71692 0.602332 8.3185L6.42048 1.04581C6.79686 0.575349 7.48335 0.499072 7.95382 0.875444Z" fill="#0A0A0A" />
                   </svg>
                   <p className='text-[18px] font-["Fira Sans"] font-normal leading-7' onClick={() => setOtpState(false)}>Back</p>
                 </div>
-            ) : null
-          }
+              ) : null
+            }
             <Image
               src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/Logo_1745575770.png"
               width={60}
@@ -162,12 +165,12 @@ export default function PhonePages() {
             <div className="w-full flex flex-col items-center px-[15px] py-[25px] lg:p-[50px] rounded-[8px] bg-[#F6F6FC] mt-[50px] lg:mt-[30px]">
               {otpState ? (
                 <OtpInput
+                  clear={clear}
                   btn_disable={otpValue.length == OTP_LENGTH}
                   handleSubmit={verifyOtp}
                   length={OTP_LENGTH}
                   setOptCombine={setOtpValue}
                   resendOtp={resendOtp}
-                  key={`${errorModal}`}
                 />
               ) : (
                 <InputPhone
@@ -235,6 +238,7 @@ export default function PhonePages() {
                 text={'Retry'}
                 color={true}
                 onClick={() => {
+                  setClear(true)
                   setOtpValue('');
                   setErrorModal(false);
                 }}

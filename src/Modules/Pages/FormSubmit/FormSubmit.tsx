@@ -83,9 +83,11 @@ const [errorModal, setErrorModal] = useState<{ [key: string]: string}>({
     }
   // const onChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
   // };
+
+  console.log(errorModal.email,data.email,"check")
   useEffect(() => {
-    setcolor(data.name !== "" && data.state !== "Select an option" && errorModal.email == "");
-  }, [data]);
+    setcolor(data.name !== "" && data.state !== "Select an option" && data.email != "" && errorModal.email != "Invalid email format");
+  }, [data, errorModal]);
 
 const onClick = (name: string) => {
     console.log("name", name);
@@ -150,7 +152,7 @@ React.useEffect(() => {
       areatext: false,
     },
     {
-      label: 'State',
+      label: <>State <span className='text-[12px] font-["Fira Sans"]'>(For GST Invoice)</span></>,
       placeholder: `Select an option`,
       type: 'text',
       name: "state",
@@ -160,10 +162,10 @@ React.useEffect(() => {
     },
     {
       label: 'Email',
-      placeholder: 'Enter email for invoice',
+      placeholder: 'Enter your email',
       type: 'email',
       name:"email",
-      required:false,
+      required:true,
       options: false,
       areatext: false,
     },
