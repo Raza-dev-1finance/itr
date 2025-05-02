@@ -79,7 +79,7 @@ export default function PhonePages() {
     axios
       .get(`${process.env.NEXT_PUBLIC_TAX_API}/website/get_otp?mobile_no=${mobileNumber}`)
       .then((res) => {
-        console.log({ res });
+        // console.log({ res });
       })
       .catch((err) => {
         console.error(err);

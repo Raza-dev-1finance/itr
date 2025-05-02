@@ -1,16 +1,16 @@
 'use client';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import InputPan from '@/Modules/components/PanInput';
 import { useRouter } from 'next/navigation';
 import { VerificationResponse } from '@/types';
-import { getStorage, updateStorage } from '@/Modules/utils/storage';
+import { getStorage, removeStorage, updateStorage } from '@/Modules/utils/storage';
 import tax_api from '@/Modules/utils/axios';
 
 export default function PanVerify() {
   const [value, setvalue] = useState<string | undefined>('');
   const [color, setcolor] = useState<boolean>(false);
-  const [errorModal, setErrorModal] = useState<boolean>(false);
+  const [errorModal, setErrorModal] = useState<ReactNode>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -34,10 +34,10 @@ export default function PanVerify() {
   const onPanInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     if (/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/.test(inputValue) && inputValue !== '') {
-        setErrorModal(false);
+        setErrorModal("");
     }
     else{
-        setErrorModal(true);
+        setErrorModal("Please enter a valid PAN.");
     }
   };
   const onPanInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,6 +56,15 @@ export default function PanVerify() {
   const onChangeValue = (value: string) => {
     setvalue(value);
   };
+  function extractPanFromMessage(message: string) {
+    const regex = /with (\w+)\. Go back/;
+    const match = message.match(regex);
+    return match ? match[1] : null;
+  }
+  function handleBack() {
+    removeStorage("verification");
+    router.push("/")
+  }
   const handleSubmit = () => {
     if (value?.length === 10 && color) {
       setcolor(false)
@@ -64,12 +73,19 @@ export default function PanVerify() {
         router.push("/details")
         setvalue("")
       }).catch(err => {
-        console.error(err)
+        if(err.response.status === 400 && err.response?.data.msg != ""){
+          const pan = extractPanFromMessage(err.response?.data.msg)
+          setErrorModal(<>
+            This PAN is already registered with {pan}. Please <span onClick={handleBack} className='underline cursor-pointer'>go back</span> to edit the number.
+          </>)
+          setcolor(false)
+        }
+        console.error(err.response.data.msg)
       })
     } else {
       console.log('Invalid phone number');
     }
-    setcolor(true)
+    // setcolor(true)
   };
 
   const handleChatClick = () => {

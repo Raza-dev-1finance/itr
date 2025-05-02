@@ -38,7 +38,6 @@
 }
 
 .ResendOtp>p{
-    cursor: pointer;
     color: var(--text-secondary, #737373);
     font-family: var(--font-family-Body, "Fira Sans");
     font-size: 14px;

@@ -120,18 +120,19 @@ export default function UploadPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const fileTemp: FileInput = {
-        file: e.target.files[0],
+      const fileTemp: FileInput[] = Array.from(e.target.files).map(file => ({
+        file,
         password: '',
         isPasswordRequired: false,
         isSubmitted: false
-      };
-      setFiles((prev) => {
-        const updated = [...prev, fileTemp];
-        // Upload only after new file is added
-        // handleFileUpload(fileTemp);
-        return updated;
-      });
+      }));
+      setFiles((prev) => [...prev, ...fileTemp]);
+      // setFiles((prev) => {
+      //   const updated = [...prev, fileTemp];
+      //   // Upload only after new file is added
+      //   // handleFileUpload(fileTemp);
+      //   return updated;
+      // });
     }
   };
 
@@ -199,8 +200,6 @@ export default function UploadPage() {
     }
   }, [isSubmitting]);
 
-  console.log({dotCount})
-
   const submitting = <>Submitting{' '}
     {Array(dotCount)
       .fill('. ')
@@ -240,6 +239,7 @@ export default function UploadPage() {
                   type="file"
                   ref={fileRef}
                   accept=".txt,.xlsx,.csv,.json,.zip,.doc,.docx,.pdf,.png,.jpg,.jpeg"
+                  multiple
                 />
                 {uploadedFiles.length > 0 && (
                   <>
@@ -261,7 +261,7 @@ export default function UploadPage() {
                             />
                             <div className="FileNames">
                               <p>{e?.filename}</p>
-                              <span>20 MB</span>
+                              <span>{e?.size_in_bytes}</span>
                             </div>
                           </div>
                         </div>
@@ -272,7 +272,7 @@ export default function UploadPage() {
                 )}
                 {!(uploadedFiles.length > 0 || files.length > 0) && (
                   <div className="UploadBtn" onClick={handleClick}>
-                    <p>Uplaod</p>
+                    <p>Upload</p>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="25"

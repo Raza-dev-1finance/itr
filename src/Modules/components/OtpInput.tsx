@@ -21,11 +21,11 @@ export default function OtpInput({
   const [otp, setOtp] = useState<string[]>(() => new Array(length).fill(''));
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [resendActive, setResendActive] = useState(true);
-  const [timmer, setTimmer] = useState<number>(60);
+  const [timmer, setTimmer] = useState<number>(59);
 
   useEffect(() => {
     if (length || resendActive) {
-      setTimmer(60);
+      setTimmer(59);
       const interval = setInterval(() => {
         setTimmer((prev) => prev - 1);
       }, 1000);
@@ -41,6 +41,12 @@ export default function OtpInput({
       };
     }
   }, [length, resendActive]);
+
+      useEffect(() => {
+        if (otpInputRefs.current[0]) {
+          otpInputRefs.current[0].focus();
+        }
+      }, [otpInputRefs]);
 
   const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
     if (
@@ -131,7 +137,7 @@ export default function OtpInput({
         ))}
       </div>
       <div className="ResendOtp">
-        <p onClick={handleResend}>Resend OTP</p>
+        <p onClick={handleResend} className={`${timmer <= 0 ? "!text-[#171717] cursor-pointer" : ""}`}>Resend OTP</p>
         {timmer <= 0 ? null : <span>00:{timmer < 10 ? `0${timmer}` : timmer}</span>}
       </div>
       <div className="pt-[30px] w-full relative">

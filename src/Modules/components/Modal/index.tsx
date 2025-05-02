@@ -56,7 +56,7 @@ export default function Modal({
     >
       <div className={`ModalCenter ${modalCentreCls}`}>
         <svg
-          className="absolute right-[20] top-[20] cursor-pointer"
+          className="absolute right-[20px] top-[20px] cursor-pointer"
           onClick={() => setOpen(false)}
           xmlns="http://www.w3.org/2000/svg"
           width="14"
