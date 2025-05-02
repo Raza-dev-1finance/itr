@@ -2,6 +2,7 @@
 import React from 'react';
 import CustomButtom from './CustomButtom';
 import Image from 'next/image';
+import Link from 'next/link';
 
 type InputPhoneProps = {
   value: string | undefined;
@@ -54,6 +55,7 @@ export default function InputPhone({
       </div>
       <div className="pt-[30px] w-full relative">
         <CustomButtom onClick={() => handleSubmit()} text="Submit" color={btn_disable} />
+          <p className='font-["Fira Sans"] text-center text-[14px] font-light leading-[20px] text-[#0A0A0A] mt-[16px]'>By proceeding, I confirm that I have read, understood, and accepted the <Link href={"https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/TermsandConditionsforFilingofIncomeTaxReturns_1746204963.pdf"} target='_blank' className='underline text-[#356494]'>Terms and Conditions</Link> governing the filing of my Income Tax Return.</p>
       </div>
     </div>
   );
