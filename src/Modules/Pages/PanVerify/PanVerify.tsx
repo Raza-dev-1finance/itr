@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { VerificationResponse } from '@/types';
 import { getStorage, removeStorage, updateStorage } from '@/Modules/utils/storage';
 import tax_api from '@/Modules/utils/axios';
+import analytics from '@/Modules/utils/analytics';
 
 export default function PanVerify() {
   const [value, setvalue] = useState<string | undefined>('');
@@ -62,12 +63,14 @@ export default function PanVerify() {
     return match ? match[1] : null;
   }
   function handleBack() {
+    analytics({"gtm.text": "EditNumberClicked-PanPage"})
     removeStorage("verification");
     router.push("/")
   }
   const handleSubmit = () => {
     if (value?.length === 10 && color) {
       setcolor(false)
+      analytics({"gtm.text": "PanDataSubmitted"})
       tax_api.post(`/website/submit_pan?pan=${value}`).then(({data}) => {
         updateStorage("verification", {pan_submitted: true})
         router.push("/details")
@@ -91,6 +94,7 @@ export default function PanVerify() {
 
   const handleChatClick = () => {
     const msg = encodeURIComponent('Hey! I need help in ITR filling!');
+    analytics({"gtm.text": "ChatWithUs-PanPage"})
     window.open(`https://api.whatsapp.com/send?phone=917718801029&text=${msg}`,'_blank');
   };
 

@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { updateStorage } from '@/Modules/utils/storage';
 import moment from 'moment';
 import tax_api from '@/Modules/utils/axios';
+import analytics from '@/Modules/utils/analytics';
 
 type PaymentPageProps = {
   paymentResponse: PaymentResponse,
@@ -25,6 +26,7 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
   }, [paymentResponse.status])
 
   function handleGetStarted() {
+    analytics({"gtm.text": "GetStartedBtnClicked"})
     router.push("/document-upload");
   }
 
@@ -34,6 +36,7 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
         await navigator.clipboard.writeText(text);
         setCopied(true)
         setTimeout(() => {setCopied(false)},1000)
+        analytics({"gtm.text": "TransactionIdCopied"})
         console.log("✅ Copied:", text);
       } catch (error) {
         console.error("❌ Copy failed:", error);

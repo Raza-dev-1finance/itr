@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import './index.css';
+import analytics from '@/Modules/utils/analytics';
 
 export default function FilestoUpload() {
   const downloadSvg = (
@@ -18,6 +19,7 @@ export default function FilestoUpload() {
         </h3>
         <Link
           target="_blank"
+          onClick={() => analytics({"gtm.text":"DownloadDocumentListPDF"})}
           href="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/ListofDocumentsforITRFilingFY2024-25_1746107326.pdf"
           className="StaticModalDownloadLink"
         >
@@ -95,6 +97,7 @@ export default function FilestoUpload() {
             Details of Asset and Liabilities (
             <Link
               target="_blank"
+              onClick={() => analytics({"gtm.text": "AssetsLiabilitiesFileDownloadClicked"})}
               href={
                 '/Assets and Liabilities.xlsx'
               }

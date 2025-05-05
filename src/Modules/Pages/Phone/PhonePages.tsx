@@ -11,6 +11,7 @@ import { getStorage, setStorage } from '@/Modules/utils/storage';
 import { VerificationResponse } from '@/types';
 import { useRouter } from 'next/navigation';
 import tax_api from '@/Modules/utils/axios';
+import analytics from '@/Modules/utils/analytics';
 
 export default function PhonePages() {
   const router = useRouter();
@@ -89,6 +90,7 @@ export default function PhonePages() {
   }
 
   function verifyOtp() {
+    analytics({"gtm.text": "VerifyOtpClicked"})
     axios
       .post(
         `${process.env.NEXT_PUBLIC_TAX_API}/website/verify_otp?mobile_no=${value}&otp=${otpValue}`,
@@ -115,12 +117,14 @@ export default function PhonePages() {
     if (value?.length === 10) {
       setOtpValue("");
       sendOtp(value);
+      analytics({"gtm.text":"ResendOtpClicked"});
     }
   };
 
   const handleSubmit = () => {
     if (value?.length === 10) {
       sendOtp(value);
+      analytics({"gtm.text":"SendOtpClicked"});
       setOtpState(true);
     }
   };
@@ -241,6 +245,7 @@ export default function PhonePages() {
                   setClear(true)
                   setOtpValue('');
                   setErrorModal(false);
+                  analytics({"gtm.text": "RetryBtnClicked"})
                 }}
               />
             </div>

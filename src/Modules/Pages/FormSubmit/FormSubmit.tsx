@@ -8,6 +8,7 @@ import tax_api from '@/Modules/utils/axios';
 import PaymentPage from '../Payment';
 import moment from 'moment';
 import Image from 'next/image';
+import analytics from '@/Modules/utils/analytics';
 
 export default function FormSubmit() {
   const router = useRouter()
@@ -21,6 +22,7 @@ export default function FormSubmit() {
       state: 'Select an option',
       email: '',
     })
+    analytics({"gtm.text":"RetryPaymentBtnClicked"})
     setPaymentResponse(undefined)
   }
 
@@ -95,6 +97,7 @@ const onClick = (name: string) => {
         setcityarr(true); 
     }
     if (name === "state") {
+      analytics({"gtm.text": "StateDropdownClicked-DetailsPage"})
         setstatearr(true); 
     }
     
@@ -131,6 +134,7 @@ React.useEffect(() => {
 
 
   const handleSubmit = () => {
+    analytics({"gtm.text":"FormDataSubmit-DetailsPage"})
     tax_api.post("/website/generate-payment-link/",{...data}).then(({data}) => {
       setFormSubmitted(true)
       if(data.statusCode === 200){
@@ -196,6 +200,7 @@ React.useEffect(() => {
   },[formSubmitted])
 
   function checkPayment() {
+    setIsLoading(true)
     let interval = setInterval(() => {
       tax_api.get(`/website/get-payment-log/`).then(({data}) => {
         console.log(data)

@@ -10,6 +10,7 @@ import { getStorage } from '@/Modules/utils/storage';
 import { VerificationResponse } from '@/types';
 import { useRouter } from 'next/navigation';
 import tax_api from '@/Modules/utils/axios';
+import analytics from '@/Modules/utils/analytics';
 
 type FileInput = {
   file: File,
@@ -58,6 +59,7 @@ export default function UploadPage() {
   }, [router, fetchUploadedFiles]);
 
   async function handleSubmit() {
+    analytics({"gtm.text": "DocumentSubmitClicked"})
     setIsSubmitting(true)
     const uploadTasks = files
       .filter(fileItem => !fileItem.isSubmitted)
@@ -143,11 +145,13 @@ export default function UploadPage() {
     setFiles([])
     fetchUploadedFiles()
     setUploadSuccess(false);
+    analytics({"gmt.text": "AddMoreDocumentClicked"})
   }
 
   function handleAddMore() {
     if (files.length > 0 || uploadedFiles.length > 0) {
       handleClick();
+      analytics({"gmt.text": "AddMoreClicked"})
     }
   }
 
@@ -155,6 +159,7 @@ export default function UploadPage() {
     const temp = files;
     temp.splice(index, 1);
     setFiles([...temp]);
+    analytics({"gtm.text":"DocumentCancelBtnClicked"})
   }
   function handleFileUpload(data: FileInput) {
     if (data.file && data.file instanceof File) {
@@ -209,6 +214,7 @@ export default function UploadPage() {
       .join('')}
   </>
   function handleView(url: string) {
+    analytics({"gtm.text": "ClickedOnFile-View"})
     window.open(url, "_blank");
   }
   return (
@@ -274,7 +280,7 @@ export default function UploadPage() {
                   </>
                 )}
                 {!(uploadedFiles.length > 0 || files.length > 0) && (
-                  <div className="UploadBtn" onClick={handleClick}>
+                  <div className="UploadBtn" onClick={() => {handleClick(); analytics({"gtm.text": "UploadDocumentBtnClicked"})}}>
                     <p>Upload</p>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

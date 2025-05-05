@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import CustomButtom from './CustomButtom';
 import Image from 'next/image';
 import Link from 'next/link';
+import analytics from '../utils/analytics';
 
 type InputPhoneProps = {
   value: string | undefined;
@@ -26,6 +27,7 @@ export default function InputPhone({
         await navigator.clipboard.writeText(text);
         setCopied(true)
         setTimeout(() => { setCopied(false) }, 1000)
+        analytics({"gtm.text": "SupportEmailCopied"})
         console.log("✅ Copied:", text);
       } catch (error) {
         console.error("❌ Copy failed:", error);
