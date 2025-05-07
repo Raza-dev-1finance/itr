@@ -19,8 +19,9 @@ export default function FormSubmit() {
   function handleRetry() {
     setvalue({
       name: '',
-      state: 'Select an option',
+      state: '',
       email: '',
+      address: '',
     })
     analytics({"gtm.text":"RetryPaymentBtnClicked"})
     setPaymentResponse(undefined)
@@ -29,7 +30,8 @@ export default function FormSubmit() {
 const [data, setvalue] = useState<{ [key: string]: string}>({
     name: '',
     email: '',
-    state: 'Select an option',
+    state: '',
+    address: '',
 });
 const wrapperRef = useRef<HTMLDivElement>(null);
 const [cityarr, setcityarr] = useState(false);
@@ -42,12 +44,17 @@ const [errorModal, setErrorModal] = useState<{ [key: string]: string}>({
 });
 
   const onPanInputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>, isRequired: boolean) => {
-    if(isRequired){
-      const inputValue = e.target.value;
-      if (inputValue === '') {
+    if (isRequired) {
+      const { name, value } = e.target;
+      if (value === '') {
         setErrorModal(prev => ({ ...prev, [e.target.name]: 'This field is required' }));
+        return
       } else {
-        setErrorModal(prev => ({ ...prev, [e.target.name]: '' }));
+        switch (name) {
+          case "name":
+            setErrorModal(prev => ({ ...prev, "name": "" }))
+            break
+        }
       }
     }
   };
@@ -86,9 +93,9 @@ const [errorModal, setErrorModal] = useState<{ [key: string]: string}>({
   // const onChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
   // };
 
-  console.log(errorModal.email,data.email,"check")
+  // console.log(errorModal.email,data.email,"check")
   useEffect(() => {
-    setcolor(data.name !== "" && data.state !== "Select an option" && data.email != "" && errorModal.email != "Invalid email format");
+    setcolor(data.name !== "" && data.state !== "" && data.email != "" && errorModal.email != "Invalid email format");
   }, [data, errorModal]);
 
 const onClick = (name: string) => {
@@ -100,7 +107,6 @@ const onClick = (name: string) => {
       analytics({"gtm.text": "StateDropdownClicked-DetailsPage"})
         setstatearr(true); 
     }
-    
 };
 
 
@@ -138,7 +144,7 @@ React.useEffect(() => {
     tax_api.post("/website/generate-payment-link/",{...data}).then(({data}) => {
       setFormSubmitted(true)
       if(data.statusCode === 200){
-        window.open(data.paymentLink);
+        router.push(data.paymentLink);
       }
     }).catch(err => {
       console.log(err)
@@ -155,6 +161,15 @@ React.useEffect(() => {
       options: false,
       areatext: false,
     },
+     {
+      label: 'Email',
+      placeholder: 'Enter your email',
+      type: 'email',
+      name:"email",
+      required:true,
+      options: false,
+      areatext: false,
+    },
     {
       label: <>State <span className='text-[12px] font-["Fira Sans"]'>(For GST Invoice)</span></>,
       placeholder: `Select an option`,
@@ -162,15 +177,6 @@ React.useEffect(() => {
       name: "state",
       required: true,
       options: true,
-      areatext: false,
-    },
-    {
-      label: 'Email',
-      placeholder: 'Enter your email',
-      type: 'email',
-      name:"email",
-      required:true,
-      options: false,
       areatext: false,
     },
     // {
@@ -182,15 +188,15 @@ React.useEffect(() => {
     //     options: true,
     //     areatext: false,
     //   },
-    // {
-    //   label: 'Address',
-    //   placeholder: `Enter your address`,
-    //   type: 'text',
-    //   name: "address",
-    //   required: false,
-    //   options: false,
-    //   areatext: true,
-    // }
+    {
+      label: 'Address',
+      placeholder: `Enter your address`,
+      type: 'text',
+      name: "address",
+      required: false,
+      options: false,
+      areatext: true,
+    }
   ];
 
   useEffect(() => {

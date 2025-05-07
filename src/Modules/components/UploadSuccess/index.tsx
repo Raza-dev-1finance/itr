@@ -2,6 +2,8 @@ import Image from 'next/image';
 import './index.css';
 import CustomButtom from '../CustomButtom';
 import tax_api from '@/Modules/utils/axios';
+import Link from 'next/link';
+import analytics from '@/Modules/utils/analytics';
 
 type UploadSuccessProps = {
   handleClick: () => void;
@@ -17,12 +19,14 @@ export default function UploadSuccess({ handleClick }: UploadSuccessProps) {
   }
   return (
     <div className="w-full flex items-center gap-[50px] flex-col">
-      <Image
-        src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/Logo_1745575770.png"
-        width={60}
-        height={65}
-        alt="logo"
-      />
+      <Link href={"https://1finance.co.in/"} onClick={() => analytics({"gtm.text": "LogoClicked-DocumentUploadSuccess"})}>
+        <Image
+          src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/Logo_1745575770.png"
+          width={60}
+          height={65}
+          alt="logo"
+        />
+      </Link>
       <div className="UploadSuccessMsg">
         <div className="flex gap-[10px] flex-col items-center UploadMsg">
           <Image
