@@ -2,7 +2,8 @@
 
 import PaymentPage from "@/Modules/Pages/Payment";
 import tax_api from "@/Modules/utils/axios";
-import { PaymentResponse } from "@/types";
+import { getStorage } from "@/Modules/utils/storage";
+import { PaymentResponse, VerificationResponse } from "@/types";
 import moment from "moment";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -13,28 +14,33 @@ export default function page() {
     const router = useRouter();
 
     useEffect(() => {
-        tax_api.get(`/website/get-payment-log/`).then(({ data }) => {
-            console.log(data)
-            if (data.status == "COMPLETED") {
-                let paymentResponse = {
-                    status: data.status,
-                    invoice_lin: data.payment_invoice_link,
-                    transaction_id: data.payment_reference_number,
-                    created_at: data.created_at,
+        const tokenData = getStorage<VerificationResponse>("verification")
+        if(!tokenData){
+            router.replace("/")
+        } else {
+            tax_api.get(`/website/get-payment-log/`).then(({ data }) => {
+                console.log(data)
+                if (data.status == "COMPLETED") {
+                    let paymentResponse = {
+                        status: data.status,
+                        invoice_lin: data.payment_invoice_link,
+                        transaction_id: data.payment_reference_number,
+                        created_at: data.created_at,
+                    }
+                    setPaymentResponse(paymentResponse)
+                } else if (data.status == "FAILED") {
+                    let paymentResponse = {
+                        status: data.status,
+                        invoice_lin: "",
+                        transaction_id: "",
+                        created_at: moment().toISOString(),
+                    }
+                    setPaymentResponse(paymentResponse)
                 }
-                setPaymentResponse(paymentResponse)
-            } else if (data.status == "FAILED") {
-                let paymentResponse = {
-                    status: data.status,
-                    invoice_lin: "",
-                    transaction_id: "",
-                    created_at: moment().toISOString(),
-                }
-                setPaymentResponse(paymentResponse)
-            }
-        }).catch(err => {
-            console.error(err)
-        })
+            }).catch(err => {
+                console.error(err)
+            })
+        }
     }, [])
 
     function handleRetry() {

@@ -144,7 +144,8 @@ React.useEffect(() => {
     tax_api.post("/website/generate-payment-link/",{...data}).then(({data}) => {
       setFormSubmitted(true)
       if(data.statusCode === 200){
-        router.push(data.paymentLink);
+        // router.push(data.paymentLink);
+        window.open(data.paymentLink);
       }
     }).catch(err => {
       console.log(err)
@@ -154,7 +155,7 @@ React.useEffect(() => {
   const formData = [
     {
       label: 'Name',
-      placeholder: 'Enter your full name',
+      placeholder: 'Name as per PAN',
       type: 'text',
       name:"name",
       required:true,

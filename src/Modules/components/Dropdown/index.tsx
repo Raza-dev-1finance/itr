@@ -50,7 +50,7 @@ export default function Dropdown({ cls, options, placeholder, onInputChange, val
             </div>
             {
                 open ? (
-                    <div style={{ boxShadow: '0px 2px 8px 0px rgba(0, 0, 0, 0.02)' }} className='w-full overflow-x-scroll max-h-[250px] absolute top-[55px] border-[1px] border-[#61625E] bg-white rounded-b-[2px] z-30 DropDownCustomScroll'>
+                    <div style={{ boxShadow: '0px 2px 8px 0px rgba(0, 0, 0, 0.02)' }} className='w-full overflow-y-scroll max-h-[250px] absolute top-[55px] border-[1px] border-[#61625E] bg-white rounded-b-[2px] z-30 DropDownCustomScroll'>
                         {options.map((state, index) => (
                             <>
                                 <div
