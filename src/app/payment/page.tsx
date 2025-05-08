@@ -56,13 +56,17 @@ export default function page() {
                     <div className="w-full">
                         <div className="flex flex-col lg:flex-row items-center justify-between lg:justify-center lg:pt-[60px] min-h-screen py-15">
                             <div className="flex flex-col gap-[30px] items-center w-11/12 lg:w-[610px] py-15 lg:p-[80px] rounded-[8px] lg:bg-white">
-                                <Image
+                                {/* <Image
                                     src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/Logo_1745575770.png"
                                     width={60}
                                     height={65}
                                     alt="logo"
                                 />
-                                <h1 className='text-["Fira Sans"] text-3xl font-normal'>Loading....</h1>
+                                <h1 className='text-["Fira Sans"] text-3xl font-normal'>Loading....</h1> */}
+                                    <div
+                                        className="h-20 w-20 animate-spin rounded-full border-4 border-gray-300"
+                                        style={{ borderTopColor: '#5b498e' }}
+                                    ></div>
                             </div>
                         </div>
                     </div>

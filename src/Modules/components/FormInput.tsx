@@ -92,6 +92,7 @@ export default function FormInput({
 
   function handleOptionClick(state: string) {
     setvalue(prev => ({ ...prev, "state": state }))
+    setStates([...statesOfIndia])
     setInputChange("")
   }
 
