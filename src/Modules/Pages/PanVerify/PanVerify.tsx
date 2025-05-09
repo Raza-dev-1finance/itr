@@ -43,16 +43,20 @@ export default function PanVerify() {
   };
   const onPanInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    if (inputValue.length > 10) {
-      return;
+    if (inputValue.length <= 10) {
+      if (!(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/.test(inputValue) && inputValue !== '')) {
+          setcolor(false);
+          if (inputValue.length >= 10) {
+            setErrorModal("Please enter a valid PAN.");
+          }
+      }
+      else{
+          setErrorModal("");
+          setcolor(true);
+      }
+      onChangeValue(inputValue);
     }
-    if (/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/.test(inputValue) && inputValue !== '') {
-        setcolor(true);
-    }
-    else{
-        setcolor(false);
-    }
-    onChangeValue(inputValue);
+    // return;
   };
   const onChangeValue = (value: string) => {
     setvalue(value);
