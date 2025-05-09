@@ -57,6 +57,10 @@ input:focus {
     outline: none;
   }
 
+textarea:focus {
+  outline: none;
+}
+
 @layer base {
   /* Chrome, Safari, Edge, Opera */
   input[type='number']::-webkit-outer-spin-button,

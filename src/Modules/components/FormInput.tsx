@@ -165,6 +165,7 @@ export default function FormInput({
                 value={inputChange != "" ? inputChange : value.state} 
                 handleOptionClick={handleOptionClick} 
                 handleInputBlur={handleStateInputBlur}
+                key={index}
               />
               : (data?.areatext ?
                 <textarea

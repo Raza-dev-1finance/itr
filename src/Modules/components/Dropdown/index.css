@@ -16,12 +16,16 @@
 
 .DropDownCustomScroll {
   scrollbar-width: unset !important;           
-  -ms-overflow-style: auto !important;        
+  -ms-overflow-style: auto !important;    
+  scrollbar-width: auto;
+
+  -webkit-overflow-scrolling: touch;
+  touch-action: manipulation;    
 }
 
 .DropDownCustomScroll::-webkit-scrollbar {
   display: block !important;
-  width: 8px;
+  width: 12px;
   height: 8px;
   scrollbar-width: thin !important;
   -ms-overflow-style: auto !important;

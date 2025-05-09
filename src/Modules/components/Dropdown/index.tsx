@@ -50,12 +50,14 @@ export default function Dropdown({ cls, options, placeholder, onInputChange, val
         }
     }, [highlightedIndex]);
     function handleBlur() {
-        if(open) {
-            setTimeout(() => setOpen(false), 100)
-        }
-        if(handleInputBlur) {
-            setTimeout(() => handleInputBlur(), 100)
-        }
+        setTimeout(() => {
+            if (handleInputBlur) {
+                handleInputBlur()
+            }
+            if (open) {
+                setOpen(false)
+            }
+        }, 100)
     }
     return (
         <div ref={dropdownRef} className={`${cls} Custom-DropDownMainContainer`}>
@@ -93,20 +95,19 @@ export default function Dropdown({ cls, options, placeholder, onInputChange, val
                 open ? (
                     <div style={{ boxShadow: '0px 2px 8px 0px rgba(0, 0, 0, 0.02)' }} className='w-full overflow-y-scroll max-h-[250px] absolute top-[55px] border-[1px] border-[#61625E] bg-white rounded-b-[2px] z-30 DropDownCustomScroll'>
                         {options.map((state, index) => (
-                            <>
-                                <div
-                                    key={index}
-                                    ref={(el) => {
-                                        optionRefs.current[index] = el;
-                                    }}
-                                    className={`flex py-[12px] px-[16px] cursor-pointer text-[#171717] font-["Fira Sans"] text-[14px] font-normal leading-5 over hover:bg-[#ededea] ${
-                                        index === highlightedIndex ? 'bg-[#E2E1F3]' : ''
-                                    }`}
-                                    onClick={() => {handleOptionClick(state); setOpen(false)}}
-                                >
-                                    {state}
-                                </div>
-                            </>
+                            <div
+                                key={`${state}${index}`}
+                                ref={(el) => {
+                                    optionRefs.current[index] = el;
+                                }}
+                                className={`flex py-[12px] px-[16px] cursor-pointer text-[#171717] font-["Fira Sans"] text-[14px] font-normal leading-5 over hover:bg-[#ededea] ${
+                                    index === highlightedIndex ? 'bg-[#E2E1F3]' : ''
+                                }`}
+                                onMouseDownCapture={() => {handleOptionClick(state); setTimeout(() => setOpen(false), 0);}}
+                                // onClick={() => {handleOptionClick(state); setOpen(false)}}
+                            >
+                                {state}
+                            </div>
                         ))}
                     </div>
                 ) : null
