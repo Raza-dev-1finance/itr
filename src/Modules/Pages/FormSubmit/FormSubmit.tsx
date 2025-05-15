@@ -144,8 +144,8 @@ React.useEffect(() => {
     tax_api.post("/website/generate-payment-link/",{...data}).then(({data}) => {
       setFormSubmitted(true)
       if(data.statusCode === 200){
-        // router.push(data.paymentLink);
-        window.open(data.paymentLink);
+        router.push(data.paymentLink);
+        // window.open(data.paymentLink);
       }
     }).catch(err => {
       console.log(err)
