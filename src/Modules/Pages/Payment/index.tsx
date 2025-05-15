@@ -155,7 +155,43 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
               </div>
             </div> */}
           </div>
-        ) : (
+        ) : 
+        paymentResponse.status === "Initiated" ? 
+        (
+          <div className="flex flex-col gap-[30px] items-center w-[610px] p-[80px] rounded-[8px] lg:bg-white">
+            <div className="FailureContainer">
+              <Image
+                src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/Logo_1745575770.png"
+                width={60}
+                height={65}
+                alt="logo"
+              />
+              <div className="FailureDetails">
+                <div className="PaymentSuccess">
+                  <Image
+                    src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/PaymentFail_1745760095.svg"
+                    width={60}
+                    height={60}
+                    alt="logo"
+                  />
+                  <p>Payment Initiated</p>
+                </div>
+                <p className="InvoiceAmount">₹2,499</p>
+                <div className="InvoiceDetail">
+                  <p>{moment(paymentResponse.created_at).format("Do MMMM YYYY | h:mm A")}</p>
+                </div>
+              </div>
+              <CustomButtom
+                text={'Retry'}
+                color={true}
+                onClick={() => { if (!(paymentResponse.status === "COMPLETED")) { handleRetry() } }}
+                cls="hidden lg:block"
+              />
+            </div>
+          </div>
+        )
+        :
+        (
           <div className="flex flex-col gap-[30px] items-center w-[610px] p-[80px] rounded-[8px] lg:bg-white">
             <div className="FailureContainer">
               <Image

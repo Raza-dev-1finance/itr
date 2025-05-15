@@ -6,12 +6,14 @@ import { getStorage } from "@/Modules/utils/storage";
 import { PaymentResponse, VerificationResponse } from "@/types";
 import moment from "moment";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function page() {
     const [paymentResponse, setPaymentResponse] = useState<PaymentResponse | undefined>();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const query = searchParams.get('q')
 
     useEffect(() => {
         const tokenData = getStorage<VerificationResponse>("verification")
@@ -28,9 +30,18 @@ export default function page() {
                         created_at: data.created_at,
                     }
                     setPaymentResponse(paymentResponse)
-                } else if (data.status == "FAILED") {
+                } else if (data.status == "FAILED" || query == "failed") {
                     let paymentResponse = {
                         status: data.status,
+                        invoice_lin: "",
+                        transaction_id: "",
+                        created_at: moment().toISOString(),
+                    } 
+
+                    setPaymentResponse(paymentResponse)
+                }   else if (data.status == 'PAYMENT_INITIATED') {
+                    let paymentResponse = {
+                        status: "Initiated",
                         invoice_lin: "",
                         transaction_id: "",
                         created_at: moment().toISOString(),
