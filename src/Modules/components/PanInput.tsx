@@ -39,7 +39,7 @@ export default function InputPan({
       onChange({ ...e, target: { ...e.target, value: capitalizedValue } });
     }}
     onBlur={onBlur}
-    placeholder="Enter your registered PAN"  // <-- Add your label text here
+    placeholder="Enter your PAN"  // <-- Add your label text here
     className="peer w-full pt-[20px] pr-[16px] pb-[8px] pl-[10px] flex-1 rounded-[4px]
     appearance-none border border-[#A3A3A3] focus:ring-0 focus:ring-offset-0
     focus:border-[#A3A3A3] bg-transparent placeholder-transparent text-[16px] font-[400] leading-[16px] text-[#000] font-['Fira Sans'] z-10"

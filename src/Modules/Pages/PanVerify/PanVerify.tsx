@@ -34,7 +34,8 @@ export default function PanVerify() {
 
   const onPanInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    if (/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/.test(inputValue) && inputValue !== '') {
+    // if (/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/.test(inputValue) && inputValue !== '') {
+    if (/[A-Z]{3}[PH][A-Z][0-9]{4}[A-Z]/.test(inputValue) && inputValue !== '') {
         setErrorModal("");
     }
     else{
@@ -43,16 +44,21 @@ export default function PanVerify() {
   };
   const onPanInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    if (inputValue.length > 10) {
-      return;
+    if (inputValue.length <= 10) {
+      // if (!(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/.test(inputValue) && inputValue !== '')) {
+      if (!(/[A-Z]{3}[PH][A-Z][0-9]{4}[A-Z]/.test(inputValue) && inputValue !== '')) {
+          setcolor(false);
+          if (inputValue.length >= 10) {
+            setErrorModal("Please enter a valid PAN.");
+          }
+      }
+      else{
+          setErrorModal("");
+          setcolor(true);
+      }
+      onChangeValue(inputValue);
     }
-    if (/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/.test(inputValue) && inputValue !== '') {
-        setcolor(true);
-    }
-    else{
-        setcolor(false);
-    }
-    onChangeValue(inputValue);
+    // return;
   };
   const onChangeValue = (value: string) => {
     setvalue(value);

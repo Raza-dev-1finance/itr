@@ -68,3 +68,22 @@
     font-weight: 400;
     line-height: 20px;
 }
+
+.CustomScroll {
+  scrollbar-width: unset !important;           
+  -ms-overflow-style: auto !important;        
+}
+
+.CustomScroll::-webkit-scrollbar {
+  display: block !important;
+  width: 8px;
+  height: 8px;
+  scrollbar-width: thin !important;
+  -ms-overflow-style: auto !important;
+}
+
+.CustomScroll::-webkit-scrollbar-thumb {
+  background-color: #D9D9D9;
+  border-radius: 8px;
+  border: 2px solid #D9D9D9;
+}
