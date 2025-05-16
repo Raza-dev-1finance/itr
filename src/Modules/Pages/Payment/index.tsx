@@ -212,7 +212,7 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
                 </div>
                 <p className="InvoiceAmount">₹2,499</p>
                 <div className="InvoiceDetail">
-                  <p>18th May 2025 | 2:31 PM</p>
+                  <p>{moment().format("Do MMMM YYYY | h:mm A")}</p>
                 </div>
               </div>
               <CustomButtom
