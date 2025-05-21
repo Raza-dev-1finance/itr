@@ -18,14 +18,8 @@ export default function page() {
     // const searchParams = useSearchParams();
     // const query = searchParams.get('q')
 
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const query = params.get("q");
-        setQueryParam(query);
-        const tokenData = getStorage<VerificationResponse>("verification")
-        if(!tokenData){
-            router.replace("/")
-        } else {
+    function checkPayment() {
+        let interval = setInterval(() => {
             tax_api.get(`/website/get-payment-log/`).then(({ data }) => {
                 console.log(data)
                 if (data.status == "COMPLETED") {
@@ -36,6 +30,7 @@ export default function page() {
                         created_at: data.created_at,
                     }
                     setPaymentResponse(paymentResponse)
+                    clearInterval(interval)
                 } else if (data.status == "FAILED" || queryParam == "failed") {
                     let paymentResponse = {
                         status: data.status,
@@ -43,8 +38,8 @@ export default function page() {
                         transaction_id: "",
                         created_at: moment().toISOString(),
                     } 
-
                     setPaymentResponse(paymentResponse)
+                    clearInterval(interval)
                 }   else if (data.status == 'PAYMENT_INITIATED') {
                     let paymentResponse = {
                         status: "Initiated",
@@ -53,10 +48,53 @@ export default function page() {
                         created_at: moment().toISOString(),
                     }
                     setPaymentResponse(paymentResponse)
+                    clearInterval(interval)
                 }
             }).catch(err => {
-                console.error(err)
-            })
+                    console.error(err)
+                })
+        },2000)
+    }
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const query = params.get("q");
+        setQueryParam(query);
+        const tokenData = getStorage<VerificationResponse>("verification")
+        if(!tokenData){
+            router.replace("/")
+        } else {
+            checkPayment()
+            // tax_api.get(`/website/get-payment-log/`).then(({ data }) => {
+            //     console.log(data)
+            //     if (data.status == "COMPLETED") {
+            //         let paymentResponse = {
+            //             status: data.status,
+            //             invoice_lin: data.payment_invoice_link,
+            //             transaction_id: data.payment_reference_number,
+            //             created_at: data.created_at,
+            //         }
+            //         setPaymentResponse(paymentResponse)
+            //     } else if (data.status == "FAILED" || queryParam == "failed") {
+            //         let paymentResponse = {
+            //             status: data.status,
+            //             invoice_lin: "",
+            //             transaction_id: "",
+            //             created_at: moment().toISOString(),
+            //         } 
+            //
+            //         setPaymentResponse(paymentResponse)
+            //     }   else if (data.status == 'PAYMENT_INITIATED') {
+            //         let paymentResponse = {
+            //             status: "Initiated",
+            //             invoice_lin: "",
+            //             transaction_id: "",
+            //             created_at: moment().toISOString(),
+            //         }
+            //         setPaymentResponse(paymentResponse)
+            //     }
+            // }).catch(err => {
+            //     console.error(err)
+            // })
         }
     }, [])
 
