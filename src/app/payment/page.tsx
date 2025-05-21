@@ -8,6 +8,7 @@ import moment from "moment";
 import Image from "next/image";
 import { useRouter} from "next/navigation";
 import { useEffect, useState } from "react";
+import analytics from '@/Modules/utils/analytics';
 
 export default function page() {
     const [paymentResponse, setPaymentResponse] = useState<PaymentResponse | undefined>();
@@ -60,6 +61,7 @@ export default function page() {
     }, [])
 
     function handleRetry() {
+        analytics({"gtm.text":"RetryPaymentBtnClicked"})
         router.replace("/details")
     }
 

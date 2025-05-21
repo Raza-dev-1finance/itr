@@ -100,7 +100,7 @@ export default function PaymentPage({ paymentResponse, handleRetry }: PaymentPag
                 </span>
               </div>
             </div>
-            <a href={paymentResponse.invoice_lin} className='w-auto lg:w-full' target='_blank'>
+            <a href={paymentResponse.invoice_lin} onClick={() => analytics({"gtm.text": "InvoiceDownloadBtnClicked"})} className='w-auto lg:w-full' target='_blank'>
               <Image
                 className="w-full cursor-pointer hidden lg:block"
                 src="https://imaages-hosting-1fin.s3.ap-south-1.amazonaws.com/Website_team/Backend/InvoiceBtn_1745758652.svg"

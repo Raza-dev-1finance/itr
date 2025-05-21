@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./index.css";
+import analytics from '@/Modules/utils/analytics';
+
 type DropdownProps = {
     cls?: string,
     options: string[],
@@ -17,6 +19,7 @@ export default function Dropdown({ cls, options, placeholder, onInputChange, val
     const optionRefs = useRef<(HTMLDivElement | null)[]>([]);
 
     function handleInputFocus(e: React.FocusEvent<HTMLInputElement>) {
+        analytics({"gtm.text": "DropdownClicked"})
         setOpen(true)
     }
 
@@ -38,6 +41,7 @@ export default function Dropdown({ cls, options, placeholder, onInputChange, val
     }, [open])
     useEffect(() => {
         if(!open && value == "" && (inputRef != null && inputRef.current == document.activeElement)){
+            analytics({"gtm.text": "DropdownClicked"})
             setOpen(true)
         }
     },[value, open, inputRef])
